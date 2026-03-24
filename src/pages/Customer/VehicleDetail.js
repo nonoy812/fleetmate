@@ -1,9 +1,12 @@
 import { useState, useEffect } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { supabase } from '../../supabaseClient'
 import './VehicleDetail.css'
 
+
 function VehicleDetail() {
+  const location = useLocation()
+  const passedDates = location.state || {}
   const { id } = useParams()
   const navigate = useNavigate()
   const [vehicle, setVehicle] = useState(null)
@@ -12,13 +15,14 @@ function VehicleDetail() {
     customer_name: '',
     customer_email: '',
     customer_phone: '',
-    pickup_date: '',
-    return_date: '',
+    pickup_date: passedDates.pickupDate || '',
+    return_date: passedDates.returnDate || '',
     with_driver: false,
     notes: ''
   })
   const [submitting, setSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
+
 
   useEffect(() => {
     async function fetchVehicle() {
@@ -135,8 +139,8 @@ function VehicleDetail() {
             <input type="email" name="customer_email" value={formData.customer_email} onChange={handleChange} required />
 
             <label>Phone Number</label>
-            <input type="tel" name="customer_phone" value={formData.customer_phone} onChange={handleChange} required />
-
+            <input type="tel" name ="customer_phone" value = {formData.customer_phone} onChange={handleChange} maxLength={11}  pattern="\d{11}"required/>
+            
             <label>Pickup Date</label>
             <input type="date" name="pickup_date" value={formData.pickup_date} onChange={handleChange} required />
 
