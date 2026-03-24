@@ -106,6 +106,7 @@ function VehicleDetail() {
 
   return (
     <div className="vehicle-detail">
+      <div className="detail-inner">     
       <button onClick={() => navigate('/vehicles')} className="back-link">← Back to Vehicles</button>
 
       <div className="detail-layout">
@@ -159,7 +160,8 @@ function VehicleDetail() {
 
             {calculateTotal() > 0 && (
               <div className="total-price">
-                <strong>Estimated Total: ₱{calculateTotal().toLocaleString()}</strong>
+                <strong>Estimated Total</strong>
+                <span>₱{calculateTotal().toLocaleString()}</span>
               </div>
             )}
 
@@ -167,7 +169,8 @@ function VehicleDetail() {
               {submitting ? 'Submitting...' : 'Submit Booking Request'}
             </button>
           </form>
-        </div>
+         </div>
+        </div>   
       </div>
     </div>
   )

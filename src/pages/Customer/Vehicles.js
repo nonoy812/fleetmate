@@ -1,4 +1,4 @@
-import {Link} from 'react-router-dom' 
+import { Link } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { supabase } from '../../supabaseClient'
 import './Vehicles.css'
@@ -25,12 +25,20 @@ function Vehicles() {
     setLoading(false)
   }
 
-  if (loading) return <p className="loading">Loading vehicles...</p>
+  if (loading) return (
+    <div className="vehicles-loading">
+      <p>Loading vehicles...</p>
+    </div>
+  )
 
   return (
     <div className="vehicles-page">
-      <h1>Our Vehicles</h1>
-      <p className="subtitle">Browse our available fleet and find your perfect ride</p>
+
+      <div className="vehicles-header">
+        <div className="vehicles-tag">Our Fleet</div>
+        <h1 className="vehicles-title">Find Your <span className="vehicles-title-accent">Perfect Ride</span></h1>
+        <p className="vehicles-sub">Browse our available fleet — with or without driver.</p>
+      </div>
 
       {vehicles.length === 0 ? (
         <p className="no-vehicles">No vehicles available at the moment.</p>
@@ -38,24 +46,36 @@ function Vehicles() {
         <div className="vehicle-grid">
           {vehicles.map((vehicle) => (
             <div key={vehicle.id} className="vehicle-card">
-              <img
-                src={vehicle.image_url || 'https://via.placeholder.com/300x200?text=No+Image'}
-                alt={vehicle.name}
-                className="vehicle-image"
-              />
+            <div className="vehicle-img-wrap">
+              {vehicle.image_url
+                ? <img src={vehicle.image_url} alt={vehicle.name} />
+                : <div className="no-img">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#555" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 4v4h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>
+                    </svg>
+                  </div>
+              }
+              <div className="vehicle-type-badge">{vehicle.type}</div>
+            </div>
+            <div className="vehicle-body">
               <div className="vehicle-info">
-                <h3>{vehicle.name}</h3>
-                <p className="vehicle-type">{vehicle.type}</p>
-                <div className="vehicle-details">
-                  <span>{vehicle.seats} seats</span>
-                  <span>₱{vehicle.price_per_day}/day</span>
+                <div className="vehicle-name-row">
+                  <h3 className="vehicle-name">{vehicle.name}</h3>
+                  <span className="vehicle-seats">{vehicle.seats} seats</span>
                 </div>
-                {vehicle.has_driver && (
-                  <p className="driver-available">Driver available (+₱{vehicle.driver_fee}/day)</p>
-                )}
-                <Link to={`/vehicles/${vehicle.id}`} className="book-btn">View Details</Link>
+              </div>
+              <div className="vehicle-footer">
+                <div className="vehicle-pricing">
+                  <span className="vehicle-price">₱{Number(vehicle.price_per_day).toLocaleString()}</span>
+                  <span className="vehicle-per"> / day</span>
+                  {vehicle.has_driver && (
+                    <p className="vehicle-driver">+₱{Number(vehicle.driver_fee).toLocaleString()} with driver</p>
+                  )}
+                </div>
+                <Link to={`/vehicles/${vehicle.id}`} className="vehicle-btn">View →</Link>
               </div>
             </div>
+          </div>
           ))}
         </div>
       )}
