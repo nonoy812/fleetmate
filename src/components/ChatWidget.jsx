@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import ReactMarkdown from 'react-markdown'
 
 // ─── Change this one value to retheme the entire widget ───
 const BRAND_COLOR = "#4ecca3";
@@ -10,31 +11,6 @@ function hexToRgba(hex, alpha) {
   const g = parseInt(hex.slice(3, 5), 16);
   const b = parseInt(hex.slice(5, 7), 16);
   return `rgba(${r},${g},${b},${alpha})`;
-}
-
-/** Darkens a hex color by a given ratio (0–1) */
-function darken(hex, ratio) {
-  const r = Math.floor(parseInt(hex.slice(1, 3), 16) * (1 - ratio));
-  const g = Math.floor(parseInt(hex.slice(3, 5), 16) * (1 - ratio));
-  const b = Math.floor(parseInt(hex.slice(5, 7), 16) * (1 - ratio));
-  return `rgb(${r},${g},${b})`;
-}
-
-const MOCK_RESPONSES = {
-  "available cars": "We currently have sedans, SUVs, and vans available. Check the Vehicles page for real-time availability!",
-  "book": "Booking is easy! Pick a vehicle, select your dates on the availability calendar, and confirm. Need help with a specific date?",
-  "rate": "Our rates vary by vehicle type. Sedans from ₱1,500/day, SUVs from ₱2,500/day, and vans from ₱3,000/day — all include basic insurance.",
-  "price": "Our rates vary by vehicle type. Sedans from ₱1,500/day, SUVs from ₱2,500/day, and vans from ₱3,000/day — all include basic insurance.",
-};
-const FALLBACK =
-  "Thanks for reaching out! For more details, feel free to browse our Vehicles page or contact Rex directly.";
-
-function getMockResponse(text) {
-  const lower = text.toLowerCase();
-  for (const key of Object.keys(MOCK_RESPONSES)) {
-    if (lower.includes(key)) return MOCK_RESPONSES[key];
-  }
-  return FALLBACK;
 }
 
 function formatTime(date) {
@@ -64,23 +40,46 @@ export default function ChatWidget() {
     }
   }, [isOpen, messages]);
 
-  const sendMessage = (text) => {
+  const sendMessage = async (text) => {
     if (!text.trim()) return;
     setChipsVisible(false);
     const userMsg = { id: Date.now(), role: "user", text, time: new Date() };
     setMessages((prev) => [...prev, userMsg]);
     setInput("");
     setIsTyping(true);
-    setTimeout(() => {
+    try {
+      const response = await fetch(
+        'https://yyndculpweiqoezdafkr.supabase.co/functions/v1/chat',
+        {
+        method: 'POST',
+        headers: {
+          Authorization: 'Bearer ${process.env.REACT_APP_SUPABASE_ANON_KEY}',
+          'Content-Type': 'application/json'},
+        body: JSON.stringify({ message: text }),
+      });
+      const data = await response.json()
+    setIsTyping(false);
+    const botMsg = {
+      id: Date.now() + 1,
+      role: "bot",
+      text: data.reply,
+      time: new Date(),
+    };
+    setMessages((prev) => [...prev, botMsg]);
+      
+    } catch (error) {
       setIsTyping(false);
       const botMsg = {
         id: Date.now() + 1,
         role: "bot",
-        text: getMockResponse(text),
+        text: "Sorry, something went wrong. Please try again.",
         time: new Date(),
       };
       setMessages((prev) => [...prev, botMsg]);
-    }, 1200);
+    }
+    
+      
+
   };
 
   const handleKeyDown = (e) => {
@@ -113,7 +112,17 @@ export default function ChatWidget() {
             {messages.map((msg) => (
               <div key={msg.id} style={{ ...s.msgRow, alignSelf: msg.role === "user" ? "flex-end" : "flex-start" }}>
                 <div style={msg.role === "user" ? s.bubbleUser : s.bubbleBot}>
-                  {msg.text}
+                {msg.role === 'bot' 
+                  ? <ReactMarkdown components={{
+                      p: ({children}) => <span style={{display: 'block', margin: '4px 0'}}>{children}</span>,
+                      strong: ({children}) => <span style={{fontWeight: 600, color: '#fff'}}>{children}</span>,
+                      ul: ({children}) => <span style={{display: 'block', margin: '4px 0', paddingLeft: 12}}>{children}</span>,
+                      ol: ({children}) => <span style={{display: 'block', margin: '4px 0', paddingLeft: 12}}>{children}</span>,
+                      li: ({children}) => <span style={{display: 'block', margin: '2px 0'}}>• {children}</span>,
+                      code: ({children}) => <span style={{background: 'rgba(255,255,255,0.1)', padding: '1px 4px', borderRadius: 3, fontSize: 12}}>{children}</span>,
+                    }}>{msg.text}</ReactMarkdown>
+                  : msg.text
+                }
                 </div>
                 <div style={{ ...s.msgTime, textAlign: msg.role === "user" ? "right" : "left" }}>
                   {formatTime(msg.time)}
