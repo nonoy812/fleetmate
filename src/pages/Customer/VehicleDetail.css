@@ -1,0 +1,179 @@
+.vehicle-detail {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 30px 20px;
+  }
+  
+  .back-link {
+    background: none;
+    border: none;
+    color: #4ecca3;
+    font-size: 16px;
+    cursor: pointer;
+    margin-bottom: 20px;
+    display: inline-block;
+  }
+  
+  .detail-layout {
+    display: flex;
+    gap: 40px;
+    flex-wrap: wrap;
+  }
+  
+  .detail-left {
+    flex: 1;
+    min-width: 300px;
+  }
+  
+  .detail-image {
+    width: 100%;
+    border-radius: 10px;
+    object-fit: cover;
+    max-height: 400px;
+  }
+  
+  .detail-info {
+    margin-top: 20px;
+  }
+  
+  .detail-info h1 {
+    margin: 0 0 5px;
+    color: #1a1a2e;
+  }
+  
+  .detail-type {
+    color: #777;
+    font-size: 14px;
+  }
+  
+  .detail-description {
+    margin: 15px 0;
+    color: #555;
+    line-height: 1.6;
+  }
+  
+  .detail-specs {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    color: #333;
+  }
+  
+  .detail-right {
+    flex: 1;
+    min-width: 300px;
+    background: #f9f9f9;
+    padding: 30px;
+    border-radius: 10px;
+  }
+  
+  .detail-right h2 {
+    margin-top: 0;
+    color: #1a1a2e;
+    margin-bottom: 20px;
+  }
+  
+  .detail-right label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 14px;
+    color: #333;
+    font-weight: bold;
+  }
+  
+  .detail-right input,
+  .detail-right textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    box-sizing: border-box;
+  }
+  
+  .detail-right textarea {
+    height: 80px;
+    resize: vertical;
+  }
+  
+  .driver-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 15px;
+  }
+  
+  .driver-checkbox input {
+    width: auto;
+    margin: 0;
+  }
+  
+  .driver-checkbox label {
+    margin: 0;
+    font-weight: normal;
+  }
+  
+  .total-price {
+    background: #1a1a2e;
+    color: #4ecca3;
+    padding: 12px;
+    border-radius: 5px;
+    text-align: center;
+    margin-bottom: 15px;
+    font-size: 18px;
+  }
+  
+  .submit-btn {
+    width: 100%;
+    padding: 12px;
+    background-color: #4ecca3;
+    color: #1a1a2e;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  
+  .submit-btn:hover {
+    background-color: #3bb08f;
+  }
+  
+  .submit-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  
+  .success-message {
+    text-align: center;
+    padding: 80px 20px;
+  }
+  
+  .success-message h2 {
+    color: #4ecca3;
+    font-size: 28px;
+  }
+  
+  .success-message p {
+    color: #555;
+    font-size: 16px;
+  }
+  
+  .back-btn {
+    margin-top: 20px;
+    padding: 12px 30px;
+    background-color: #4ecca3;
+    color: #1a1a2e;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 15px;
+  }
+  
+  .loading {
+    text-align: center;
+    padding: 60px;
+    color: #777;
+  }
