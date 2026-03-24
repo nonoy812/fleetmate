@@ -1,179 +1,396 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+/* ── Base ── */
 .vehicle-detail {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 30px 20px;
+  font-family: 'DM Sans', sans-serif;
+  background: #0a0a0a;
+  color: #fff;
+  min-height: 100vh;
+  width: 100%;
+}
+
+.detail-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 48px 60px 80px;
+}
+
+/* ── Loading ── */
+.loading {
+  background: #0a0a0a;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'DM Sans', sans-serif;
+  color: #fff;
+  font-size: 16px;
+  padding: 60px;
+  text-align: center;
+}
+
+/* ── Back Link ── */
+.back-link {
+  background: none;
+  border: 1px solid #1e1e1e;
+  color: #fff;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-bottom: 48px;
+  display: inline-block;
+  transition: border-color 0.2s, color 0.2s;
+  text-decoration: none;
+}
+
+.back-link:hover {
+  border-color: #059669;
+  color: #059669;
+}
+
+/* ── Layout ── */
+.detail-layout {
+  display: flex;
+  gap: 48px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+/* ── Left Column ── */
+.detail-left {
+  flex: 1.1;
+  min-width: 300px;
+}
+
+.detail-image {
+  width: 100%;
+  border-radius: 16px;
+  object-fit: cover;
+  max-height: 420px;
+  display: block;
+  border: 1px solid #1e1e1e;
+}
+
+/* ── Vehicle Info ── */
+.detail-info {
+  margin-top: 28px;
+}
+
+.detail-info h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(28px, 4vw, 40px);
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0 0 10px;
+  letter-spacing: -1px;
+  line-height: 1.1;
+}
+
+.detail-type {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #059669;
+  border: 1px solid rgba(5,150,105,0.4);
+  padding: 4px 12px;
+  border-radius: 100px;
+  margin-bottom: 16px;
+}
+
+.detail-description {
+  font-size: 14px;
+  color: #ccc;
+  line-height: 1.75;
+  font-weight: 300;
+  margin: 16px 0 24px;
+}
+
+/* ── Specs ── */
+.detail-specs {
+  display: flex;
+  gap: 0;
+  flex-wrap: wrap;
+  border: 1px solid #1e1e1e;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.detail-specs div {
+  flex: 1;
+  min-width: 100px;
+  padding: 16px 20px;
+  font-size: 14px;
+  color: #fff;
+  font-weight: 400;
+  border-right: 1px solid #1e1e1e;
+}
+
+.detail-specs div:last-child {
+  border-right: none;
+}
+
+.detail-specs div strong {
+  display: block;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #555;
+  margin-bottom: 5px;
+}
+
+/* ── Right Column — Booking Form ── */
+.detail-right {
+  flex: 0.9;
+  min-width: 300px;
+  background: #111;
+  border: 1px solid #1e1e1e;
+  border-radius: 16px;
+  padding: 32px;
+  position: sticky;
+  top: 24px;
+}
+
+.detail-right h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 28px;
+  letter-spacing: -0.5px;
+}
+
+/* ── Form Labels ── */
+.detail-right label {
+  display: block;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #555;
+  margin-bottom: 6px;
+}
+
+/* ── Form Inputs ── */
+.detail-right input[type="text"],
+.detail-right input[type="email"],
+.detail-right input[type="tel"],
+.detail-right input[type="date"],
+.detail-right textarea {
+  width: 100%;
+  padding: 12px 14px;
+  margin-bottom: 18px;
+  background: #161616;
+  border: 1px solid #222;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 14px;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 400;
+  box-sizing: border-box;
+  transition: border-color 0.2s;
+  outline: none;
+}
+
+.detail-right input[type="text"]:focus,
+.detail-right input[type="email"]:focus,
+.detail-right input[type="tel"]:focus,
+.detail-right input[type="date"]:focus,
+.detail-right textarea:focus {
+  border-color: #059669;
+}
+
+.detail-right input::-webkit-calendar-picker-indicator {
+  filter: invert(0.4);
+  cursor: pointer;
+}
+
+.detail-right textarea {
+  height: 88px;
+  resize: vertical;
+  line-height: 1.6;
+}
+
+/* ── Driver Checkbox ── */
+.driver-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+  padding: 12px 14px;
+  background: #161616;
+  border: 1px solid #222;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.driver-checkbox:hover {
+  border-color: #333;
+}
+
+.driver-checkbox input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  accent-color: #059669;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.driver-checkbox label {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 400;
+  color: #fff;
+  letter-spacing: 0;
+  text-transform: none;
+  cursor: pointer;
+}
+
+/* ── Total Price ── */
+.total-price {
+  background: rgba(5,150,105,0.08);
+  border: 1px solid rgba(5,150,105,0.25);
+  border-radius: 10px;
+  padding: 14px 18px;
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.total-price strong {
+  font-size: 13px;
+  font-weight: 500;
+  color: #fff;
+}
+
+.total-price span {
+  font-size: 22px;
+  font-weight: 600;
+  color: #059669;
+}
+
+/* ── Submit Button ── */
+.submit-btn {
+  width: 100%;
+  padding: 14px;
+  background: #059669;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+  letter-spacing: 0.02em;
+}
+
+.submit-btn:hover {
+  background: #047857;
+  transform: scale(1.01);
+}
+
+.submit-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ── Success Screen ── */
+.success-message {
+  font-family: 'DM Sans', sans-serif;
+  background: #0a0a0a;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 80px 20px;
+  animation: fadeUp 0.6s ease both;
+}
+
+.success-message h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 40px;
+  font-weight: 800;
+  color: #ffffff;
+  margin-bottom: 16px;
+  letter-spacing: -1px;
+}
+
+.success-message h2 span {
+  color: #059669;
+}
+
+.success-message p {
+  font-size: 15px;
+  color: #ccc;
+  font-weight: 300;
+  line-height: 1.7;
+  max-width: 420px;
+  margin: 0 auto 8px;
+}
+
+.back-btn {
+  margin-top: 32px;
+  padding: 14px 32px;
+  background: #059669;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+}
+
+.back-btn:hover {
+  background: #047857;
+  transform: scale(1.02);
+}
+
+/* ── Animation ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .detail-inner {
+    padding: 32px 24px 60px;
   }
-  
-  .back-link {
-    background: none;
-    border: none;
-    color: #4ecca3;
-    font-size: 16px;
-    cursor: pointer;
-    margin-bottom: 20px;
-    display: inline-block;
-  }
-  
+
   .detail-layout {
-    display: flex;
-    gap: 40px;
-    flex-wrap: wrap;
+    flex-direction: column;
+    gap: 32px;
   }
-  
-  .detail-left {
-    flex: 1;
-    min-width: 300px;
-  }
-  
-  .detail-image {
-    width: 100%;
-    border-radius: 10px;
-    object-fit: cover;
-    max-height: 400px;
-  }
-  
-  .detail-info {
-    margin-top: 20px;
-  }
-  
-  .detail-info h1 {
-    margin: 0 0 5px;
-    color: #1a1a2e;
-  }
-  
-  .detail-type {
-    color: #777;
-    font-size: 14px;
-  }
-  
-  .detail-description {
-    margin: 15px 0;
-    color: #555;
-    line-height: 1.6;
-  }
-  
-  .detail-specs {
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
-    color: #333;
-  }
-  
+
   .detail-right {
-    flex: 1;
-    min-width: 300px;
-    background: #f9f9f9;
-    padding: 30px;
-    border-radius: 10px;
+    position: static;
+    padding: 24px;
   }
-  
-  .detail-right h2 {
-    margin-top: 0;
-    color: #1a1a2e;
-    margin-bottom: 20px;
+
+  .detail-specs {
+    flex-direction: column;
   }
-  
-  .detail-right label {
-    display: block;
-    margin-bottom: 5px;
-    font-size: 14px;
-    color: #333;
-    font-weight: bold;
+
+  .detail-specs div {
+    border-right: none;
+    border-bottom: 1px solid #1e1e1e;
   }
-  
-  .detail-right input,
-  .detail-right textarea {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    font-size: 14px;
-    box-sizing: border-box;
+
+  .detail-specs div:last-child {
+    border-bottom: none;
   }
-  
-  .detail-right textarea {
-    height: 80px;
-    resize: vertical;
-  }
-  
-  .driver-checkbox {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 15px;
-  }
-  
-  .driver-checkbox input {
-    width: auto;
-    margin: 0;
-  }
-  
-  .driver-checkbox label {
-    margin: 0;
-    font-weight: normal;
-  }
-  
-  .total-price {
-    background: #1a1a2e;
-    color: #4ecca3;
-    padding: 12px;
-    border-radius: 5px;
-    text-align: center;
-    margin-bottom: 15px;
-    font-size: 18px;
-  }
-  
-  .submit-btn {
-    width: 100%;
-    padding: 12px;
-    background-color: #4ecca3;
-    color: #1a1a2e;
-    border: none;
-    border-radius: 5px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-  }
-  
-  .submit-btn:hover {
-    background-color: #3bb08f;
-  }
-  
-  .submit-btn:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
-  
-  .success-message {
-    text-align: center;
-    padding: 80px 20px;
-  }
-  
-  .success-message h2 {
-    color: #4ecca3;
-    font-size: 28px;
-  }
-  
-  .success-message p {
-    color: #555;
-    font-size: 16px;
-  }
-  
-  .back-btn {
-    margin-top: 20px;
-    padding: 12px 30px;
-    background-color: #4ecca3;
-    color: #1a1a2e;
-    border: none;
-    border-radius: 5px;
-    font-weight: bold;
-    cursor: pointer;
-    font-size: 15px;
-  }
-  
-  .loading {
-    text-align: center;
-    padding: 60px;
-    color: #777;
-  }
+}
