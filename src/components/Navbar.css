@@ -1,31 +1,58 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=DM+Sans:wght@300;400;500;600&display=swap');
+
 .navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px 30px;
-  background-color: #0f1a14;
-  color: white;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
+  padding: 18px 60px;
+  background-color: #0a0a0a;
+  border-bottom: 1px solid #141414;
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
 .navbar-logo {
+  font-family: 'Playfair Display', serif;
   font-size: 22px;
   font-weight: 800;
+  color: #ffffff;
   text-decoration: none;
-  background: linear-gradient(90deg, #0097b2, #7ed957);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  letter-spacing: -0.5px;
+}
+
+.navbar-logo span {
+  color: #059669;
+}
+
+.navbar-links {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .navbar-links a {
-  color: #cccccc;
+  color: #666;
   text-decoration: none;
-  margin-left: 24px;
-  font-size: 15px;
-  transition: color 0.2s;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  padding: 8px 16px;
+  border-radius: 8px;
+  transition: color 0.2s, background 0.2s;
+  letter-spacing: 0.01em;
 }
 
 .navbar-links a:hover {
-  color: #7ed957;
+  color: #ffffff;
+  background: #141414;
+}
+
+.navbar-links a.active {
+  color: #059669;
+}
+
+@media (max-width: 768px) {
+  .navbar { padding: 16px 24px; }
+  .navbar-links a { padding: 6px 10px; font-size: 13px; }
 }

@@ -1,0 +1,24 @@
+/* =============================================
+   FleetMate — Global Color Variables
+   Change these to retheme the entire app
+   ============================================= */
+
+:root {
+  /* Primary emerald — buttons, accents, prices */
+  --color-primary: #059669;
+  --color-primary-dark: #047857;
+
+  /* Slate — secondary text, subtle UI elements */
+  --color-accent: #475569;
+  --color-accent-light: #94a3b8;
+
+  /* Navbar — separate from hero */
+  --color-navbar: #111827;
+
+  /* Hero background */
+  --color-bg-dark: #064e3b;
+
+  /* Page & surface backgrounds */
+  --color-bg-light: #ffffff;
+  --color-bg-surface: #f1f5f9;
+}
