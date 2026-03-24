@@ -4,6 +4,7 @@ import Home from './pages/Customer/Home'
 import Vehicles from './pages/Customer/Vehicles'
 import VehicleDetail from './pages/Customer/VehicleDetail'
 import Dashboard from './pages/Admin/Dashboard'
+import ChatWidget from './components/ChatWidget';
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Route path="/vehicles/:id" element={<VehicleDetail />} />
         <Route path="/admin" element={<Dashboard />} />
       </Routes>
+      <ChatWidget/>
     </BrowserRouter>
   )
 }
