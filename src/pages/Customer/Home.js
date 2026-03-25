@@ -83,7 +83,7 @@ function Home() {
             Drive Your<br />
             <span className="hero-title-accent">Next Adventure</span>
           </h1>
-          <p className="hero-sub">Premium vehicles, flexible rentals, with or without driver.</p>
+          <p className="hero-sub">The finest fleet in Iloilo, ready and waiting whenever you are.</p>
         </div>
 
         {/* Search Bar */}

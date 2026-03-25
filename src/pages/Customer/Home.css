@@ -97,7 +97,7 @@
   color: #888;
   font-weight: 300;
   line-height: 1.6;
-  max-width: 440px;
+  max-width: 560px;
 }
 
 /* ── Search Card ── */
@@ -365,7 +365,6 @@
   padding-top: 14px;
 }
 
-.vehicle-pricing {}
 
 .vehicle-price {
   font-size: 20px;
@@ -427,7 +426,7 @@
   gap: 48px;
 }
 
-.feature-item {}
+
 
 .feature-icon {
   color: #059669;
