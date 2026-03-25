@@ -53,7 +53,7 @@ export default function ChatWidget() {
         {
         method: 'POST',
         headers: {
-          Authorization: 'Bearer ${process.env.REACT_APP_SUPABASE_ANON_KEY}',
+          Authorization: `Bearer ${process.env.REACT_APP_SUPABASE_ANON_KEY}`,
           'Content-Type': 'application/json'},
         body: JSON.stringify({ message: text }),
       });
