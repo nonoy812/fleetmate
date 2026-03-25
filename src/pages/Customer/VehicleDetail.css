@@ -367,8 +367,13 @@
 
 /* ── Responsive ── */
 @media (max-width: 768px) {
+  .vehicle-detail {
+    overflow-x: hidden;
+  }
+
   .detail-inner {
     padding: 32px 24px 60px;
+    overflow-x: hidden;
   }
 
   .detail-layout {
@@ -379,18 +384,34 @@
   .detail-right {
     position: static;
     padding: 24px;
+    width: 100%;
+    box-sizing: border-box;
   }
 
-  .detail-specs {
-    flex-direction: column;
+  .detail-right input[type="text"],
+  .detail-right input[type="email"],
+  .detail-right input[type="tel"],
+  .detail-right input[type="date"],
+  .detail-right textarea {
+    width: 100%;
+    box-sizing: border-box;
+    max-width: 100%;
   }
 
   .detail-specs div {
-    border-right: none;
-    border-bottom: 1px solid #1e1e1e;
+    border-right: 1px solid #1e1e1e;
+    border-bottom: none;
+    padding: 12px 10px;
+    font-size: 12px;
+    min-width: 0;
   }
 
   .detail-specs div:last-child {
+    border-right: none;
     border-bottom: none;
+  }
+
+  .detail-specs div strong {
+    font-size: 9px;
   }
 }
