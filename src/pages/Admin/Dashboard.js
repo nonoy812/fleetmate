@@ -25,7 +25,7 @@ function Dashboard() {
     description: '',
     status: 'available'
   })
-
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (activeTab === 'bookings') {
       fetchBookings()
