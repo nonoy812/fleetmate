@@ -6,16 +6,25 @@ import VehicleDetail from './pages/Customer/VehicleDetail'
 import Dashboard from './pages/Admin/Dashboard'
 import Login from './pages/Admin/Login'
 import ProtectedRoute from './components/ProtectedRoute'
-import ChatWidget from './components/ChatWidget';
+import ChatWidget from './components/ChatWidget'
+
+function CustomerLayout({ children }) {
+  return (
+    <>
+      <Navbar />
+      {children}
+      <ChatWidget />
+    </>
+  )
+}
 
 function App() {
   return (
     <BrowserRouter>
-      <Navbar />
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/vehicles" element={<Vehicles />} />
-        <Route path="/vehicles/:id" element={<VehicleDetail />} />
+        <Route path="/" element={<CustomerLayout><Home /></CustomerLayout>} />
+        <Route path="/vehicles" element={<CustomerLayout><Vehicles /></CustomerLayout>} />
+        <Route path="/vehicles/:id" element={<CustomerLayout><VehicleDetail /></CustomerLayout>} />
         <Route path="/login" element={<Login />} />
         <Route path="/admin" element={
           <ProtectedRoute>
@@ -23,7 +32,6 @@ function App() {
           </ProtectedRoute>
         } />
       </Routes>
-      <ChatWidget/>
     </BrowserRouter>
   )
 }
