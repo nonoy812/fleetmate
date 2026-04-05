@@ -6,6 +6,7 @@ import { supabase } from '../../supabaseClient'
 import './VehicleDetail.css'
 
 
+
 function VehicleDetail() {
   const location = useLocation()
   const passedDates = location.state || {}
@@ -13,6 +14,8 @@ function VehicleDetail() {
   const navigate = useNavigate()
   const [vehicle, setVehicle] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [bookingError, setBookingError] = useState('')
+  
   const [formData, setFormData] = useState({
     customer_name: '',
     customer_email: '',
@@ -21,6 +24,7 @@ function VehicleDetail() {
     return_date: passedDates.returnDate || '',
     with_driver: false,
     notes: ''
+    
   })
   const [submitting, setSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
@@ -116,11 +120,28 @@ function VehicleDetail() {
         return pickup <= bEnd && returnD >= bStart
       })
 
-      if (conflict) {
-        alert('Sorry, these dates were just approved for another booking. Please select different dates.')
-        window.location.reload()
-        return
+    if (conflict) {
+      setBookingError('These dates are already reserved. Please choose different dates.')
+      // re-fetch fresh blocked ranges so calendar updates
+      const { data: refreshed } = await supabase
+        .from('bookings')
+        .select('pickup_date, return_date')
+        .eq('vehicle_id', vehicle.id)
+        .eq('status', 'approved')
+
+      if (refreshed) {
+        setBlockedRanges(refreshed.map(b => {
+          const [sy, sm, sd] = b.pickup_date.split('-').map(Number)
+          const [ey, em, ed] = b.return_date.split('-').map(Number)
+          return {
+            start: new Date(sy, sm - 1, sd),
+            end: new Date(ey, em - 1, ed)
+          }
+        }))
       }
+      setFormData(prev => ({ ...prev, pickup_date: '', return_date: '' }))
+      return
+    }
     }
     setSubmitting(true)
 
@@ -211,12 +232,14 @@ function VehicleDetail() {
                   <label>Pickup Date</label>
                   <DatePicker
                     selected={pickupDateObj}
-                    onChange={date => {
+                    onChange={date => { 
                       if (!date) return
+                      setBookingError('')  
                       setFormData(prev => ({
                         ...prev,
                         pickup_date: date.toLocaleDateString('en-CA'),
                         return_date: ''
+                        
                       }))
                     }}
                     selectsStart
@@ -227,7 +250,8 @@ function VehicleDetail() {
                     dateFormat="yyyy-MM-dd"
                     placeholderText="Select pickup date"
                     className="date-input"
-                    calendarClassName="dark-calendar"
+                    calendarClassName="detail-calendar"
+                    dayClassName={date => isDateBlocked(date) ? 'blocked-date' : undefined}
                     autoComplete="off"
                     required
                   />
@@ -238,6 +262,7 @@ function VehicleDetail() {
                     selected={returnDateObj}
                     onChange={date => {
                       if (!date) return
+                      setBookingError('')  
                       setFormData(prev => ({
                         ...prev,
                         return_date: date.toLocaleDateString('en-CA')
@@ -251,7 +276,8 @@ function VehicleDetail() {
                     dateFormat="yyyy-MM-dd"
                     placeholderText="Select return date"
                     className="date-input"
-                    calendarClassName="dark-calendar"
+                    calendarClassName="detail-calendar"
+                    dayClassName={date => isDateBlocked(date) ? 'blocked-date' : undefined}
                     autoComplete="off"
                     required
                   />
@@ -273,7 +299,9 @@ function VehicleDetail() {
                   <span>₱{calculateTotal().toLocaleString()}</span>
                 </div>
               )}
-
+              {bookingError && (
+                <p className="booking-error">{bookingError}</p>
+              )}
               <button type="submit" className="submit-btn" disabled={submitting}>
                 {submitting ? 'Submitting...' : 'Submit Booking Request'}
               </button>
