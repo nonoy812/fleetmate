@@ -48,7 +48,7 @@ function Home() {
       .from('bookings')
       .select('vehicle_id')
       .in('vehicle_id', vehicleIds)
-      .not('status','in', '("cancelled","rejected")')
+      .eq('status' ,'approved')
       .lte('pickup_date', returnDate)
       .gte('return_date', pickupDate)
 

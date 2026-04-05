@@ -44,7 +44,7 @@ function VehicleDetail() {
         .from('bookings')
         .select('pickup_date, return_date')
         .eq('vehicle_id', id)
-        .eq('status', 'confirmed')
+        .eq('status', 'approved')
 
       if (confirmedBookings) {
         setBlockedRanges(confirmedBookings.map(b => {
