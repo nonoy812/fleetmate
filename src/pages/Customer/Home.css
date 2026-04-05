@@ -117,6 +117,41 @@
   flex-wrap: wrap;
 }
 
+/* ── Home DatePicker Input ── */
+.home-date-input {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #111;
+  font-size: 15px;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 400;
+  padding: 0;
+  cursor: pointer;
+  width: 100%;
+}
+
+/* ── Seats Select ── */
+.search-field select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23059669' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 4px center;
+  padding-right: 20px;
+  color: #111;
+  font-size: 15px;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 400;
+  cursor: pointer;
+}
+
+.search-field select option {
+  background: #fff;
+  color: #111;
+}
+
+
 .search-fields {
   display: flex;
   flex: 1;

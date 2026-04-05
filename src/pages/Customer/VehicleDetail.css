@@ -216,6 +216,28 @@
   line-height: 1.6;
 }
 
+/* ── Date Pickers Row ── */
+.date-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.date-row .date-field {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.date-row .date-field label {
+  margin-bottom: 6px;
+}
+
+.date-row .date-field .date-input {
+  width: 100%;
+}
+
+
 /* ── Driver Checkbox ── */
 .driver-checkbox {
   display: flex;
@@ -357,6 +379,146 @@
 .back-btn:hover {
   background: #047857;
   transform: scale(1.02);
+}
+
+/* ── DatePicker Input ── */
+.date-input {
+  width: 100%;
+  padding: 12px 14px;
+  background: #161616;
+  border: 1px solid #222;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 14px;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 400;
+  box-sizing: border-box;
+  transition: border-color 0.2s;
+  outline: none;
+  cursor: pointer;
+}
+
+.date-input:focus {
+  border-color: #059669;
+}
+
+/* ── Dark Calendar Popup ── */
+.dark-calendar {
+  background: #111 !important;
+  border: 1px solid #1e1e1e !important;
+  border-radius: 12px !important;
+  font-family: 'DM Sans', sans-serif !important;
+  padding: 8px !important;
+}
+
+/* Header (Month/Year + arrows) */
+.dark-calendar .react-datepicker__header {
+  background: #111 !important;
+  border-bottom: 1px solid #1e1e1e !important;
+  border-radius: 10px 10px 0 0 !important;
+  padding-top: 12px !important;
+}
+
+.dark-calendar .react-datepicker__current-month {
+  color: #fff !important;
+  font-family: 'Playfair Display', serif !important;
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  margin-bottom: 8px !important;
+}
+
+.dark-calendar .react-datepicker__navigation-icon::before {
+  border-color: #555 !important;
+}
+
+.dark-calendar .react-datepicker__navigation:hover .react-datepicker__navigation-icon::before {
+  border-color: #fff !important;
+}
+
+/* Day names (Su Mo Tu...) */
+.dark-calendar .react-datepicker__day-name {
+  color: #555 !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.05em !important;
+}
+
+/* Day numbers */
+.dark-calendar .react-datepicker__day {
+  color: #fff !important;
+  border-radius: 6px !important;
+  transition: background 0.15s !important;
+}
+
+.dark-calendar .react-datepicker__day:hover {
+  background: #059669 !important;
+  color: #fff !important;
+}
+
+/* Selected day */
+.dark-calendar .react-datepicker__day--selected {
+  background: #059669 !important;
+  color: #fff !important;
+  font-weight: 600 !important;
+}
+
+/* Today */
+.dark-calendar .react-datepicker__day--today {
+  border: 1px solid #059669 !important;
+  background: transparent !important;
+  color: #059669 !important;
+  font-weight: 600 !important;
+}
+
+.dark-calendar .react-datepicker__day--today:hover {
+  background: #059669 !important;
+  color: #fff !important;
+}
+
+/* Disabled/blocked days */
+.dark-calendar .react-datepicker__day--disabled {
+  color: #333 !important;
+  cursor: not-allowed !important;
+  text-decoration: line-through !important;
+}
+
+.dark-calendar .react-datepicker__day--disabled:hover {
+  background: transparent !important;
+}
+
+/* Outside month days */
+.dark-calendar .react-datepicker__day--outside-month {
+  color: #333 !important;
+}
+
+/* Triangle/arrow pointer */
+.dark-calendar .react-datepicker__triangle {
+  display: none !important;
+}
+
+/* ── Date Range Highlight ── */
+.dark-calendar .react-datepicker__day--in-range {
+  background: rgba(5, 150, 105, 0.2) !important;
+  color: #fff !important;
+  border-radius: 0 !important;
+}
+
+.dark-calendar .react-datepicker__day--range-start {
+  background: #059669 !important;
+  color: #fff !important;
+  border-radius: 6px 0 0 6px !important;
+}
+
+.dark-calendar .react-datepicker__day--range-end {
+  background: #059669 !important;
+  color: #fff !important;
+  border-radius: 0 6px 6px 0 !important;
+}
+
+.dark-calendar .react-datepicker__day--in-selecting-range {
+  background: rgba(5, 150, 105, 0.15) !important;
+  color: #fff !important;
+  border-radius: 0 !important;
 }
 
 /* ── Animation ── */

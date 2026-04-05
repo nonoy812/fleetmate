@@ -2,6 +2,8 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../../supabaseClient'
 import './Home.css'
+import DatePicker from 'react-datepicker'
+import 'react-datepicker/dist/react-datepicker.css'
 
 function Home() {
   const [pickupDate, setPickupDate] = useState('')
@@ -91,21 +93,42 @@ function Home() {
           <div className="search-fields">
             <div className="search-field">
               <label>Pickup Date</label>
-              <input
-                type="date"
-                min={today}
-                value={pickupDate}
-                onChange={e => setPickupDate(e.target.value)}
+              <DatePicker
+                selected={pickupDate ? new Date(pickupDate + 'T00:00:00') : null}
+                onChange={date => {
+                  if (!date) return
+                  setPickupDate(date.toLocaleDateString('en-CA'))
+                  setReturnDate('')
+                }}
+                minDate={new Date()}
+                selectsStart
+                startDate={pickupDate ? new Date(pickupDate + 'T00:00:00') : null}
+                endDate={returnDate ? new Date(returnDate + 'T00:00:00') : null}
+                dateFormat="yyyy-MM-dd"
+                placeholderText="Select pickup date"
+                className="home-date-input"
+                calendarClassName="dark-calendar"
+                autoComplete="off"
               />
             </div>
             <div className="search-divider" />
             <div className="search-field">
               <label>Return Date</label>
-              <input
-                type="date"
-                min={pickupDate || today}
-                value={returnDate}
-                onChange={e => setReturnDate(e.target.value)}
+              <DatePicker
+                selected={returnDate ? new Date(returnDate + 'T00:00:00') : null}
+                onChange={date => {
+                  if (!date) return
+                  setReturnDate(date.toLocaleDateString('en-CA'))
+                }}
+                minDate={pickupDate ? new Date(new Date(pickupDate + 'T00:00:00').getTime() + 86400000) : new Date()}
+                selectsEnd
+                startDate={pickupDate ? new Date(pickupDate + 'T00:00:00') : null}
+                endDate={returnDate ? new Date(returnDate + 'T00:00:00') : null}
+                dateFormat="yyyy-MM-dd"
+                placeholderText="Select return date"
+                className="home-date-input"
+                calendarClassName="dark-calendar"
+                autoComplete="off"
               />
             </div>
             <div className="search-divider" />
