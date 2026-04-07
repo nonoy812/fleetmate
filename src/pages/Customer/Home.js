@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../../supabaseClient'
 import './Home.css'
@@ -13,6 +13,14 @@ function Home() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [searched, setSearched] = useState(false)
+  const resultsRef = useRef(null)
+
+  useEffect(() => {
+    if (results && resultsRef.current) {
+      const top = resultsRef.current.getBoundingClientRect().top + window.scrollY - 80
+      window.scrollTo({ top, behavior: 'smooth' })
+    }
+  }, [results])
 
   const handleSearch = async () => {
     if (!pickupDate || !returnDate) {
@@ -37,6 +45,7 @@ function Home() {
     }
 
     const { data: vehicles, error: vehicleError } = await vehicleQuery
+
 
     if (vehicleError) {
       setError('Something went wrong. Please try again.')
@@ -161,7 +170,7 @@ function Home() {
 
       {/* Results */}
       {searched && (
-        <section className="results-section">
+        <section className="results-section" ref={resultsRef}>
           <div className="results-header">
             <h2 className="results-title">
               {loading
