@@ -24,6 +24,7 @@ function Dashboard() {
   }
 
   async function handleLogout() {
+    if (!window.confirm('Are you sure you want to logout?')) return
     await supabase.auth.signOut()
     navigate('/login')
   }
@@ -68,7 +69,7 @@ function Dashboard() {
   return (
     <div className="admin-layout">
 
-      {/* Sidebar */}
+      {/* Sidebar — PC only */}
       <aside className="admin-sidebar">
         <div className="sidebar-brand">
           <span className="sidebar-brand-fleet">Fleet</span>
@@ -124,10 +125,7 @@ function Dashboard() {
 
         <div className="admin-content">
           {activePage === 'overview' && (
-            <Overview
-              onNavigate={setActivePage}
-              onStatusChange={fetchPendingCount}
-            />
+            <Overview onNavigate={setActivePage} onStatusChange={fetchPendingCount} />
           )}
           {activePage === 'bookings' && (
             <BookingsPage onStatusChange={fetchPendingCount} />
@@ -137,6 +135,34 @@ function Dashboard() {
           )}
         </div>
       </main>
+
+      {/* Bottom Tab Bar — mobile only */}
+      <nav className="bottom-tab-bar">
+        {navItems.map(item => (
+          <button
+            key={item.id}
+            className={`bottom-tab-item ${activePage === item.id ? 'active' : ''}`}
+            onClick={() => setActivePage(item.id)}
+          >
+            <div className="bottom-tab-item-icon">
+              {item.icon}
+              {item.badge > 0 && <span className="nav-badge">{item.badge}</span>}
+            </div>
+            {item.label}
+          </button>
+        ))}
+        <button className="bottom-tab-item" onClick={handleLogout}>
+          <div className="bottom-tab-item-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+              <polyline points="16 17 21 12 16 7"/>
+              <line x1="21" y1="12" x2="9" y2="12"/>
+            </svg>
+          </div>
+          Logout
+        </button>
+      </nav>
+
     </div>
   )
 }

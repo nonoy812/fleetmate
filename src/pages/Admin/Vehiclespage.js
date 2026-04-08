@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { supabase } from '../../supabaseClient'
 import VehicleCalendar from './Vehiclecalendar'
+import ReactDOM from 'react-dom'
 import './Vehiclespage.css'
 
 function VehiclesPage() {
@@ -8,7 +9,7 @@ function VehiclesPage() {
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
   const [editingVehicle, setEditingVehicle] = useState(null)
-  const [calendarVehicle, setCalendarVehicle] = useState(null)
+  const [selectedVehicle, setSelectedVehicle] = useState(null)
   const [confirmToggle, setConfirmToggle] = useState(null)
   const [confirmDelete, setConfirmDelete] = useState(null)
   const [search, setSearch] = useState('')
@@ -16,16 +17,17 @@ function VehiclesPage() {
   const [statusFilter, setStatusFilter] = useState('all')
   const [seatsFilter, setSeatsFilter] = useState('')
   const [showTopBtn, setShowTopBtn] = useState(false)
+  const [cols, setCols] = useState(3)
   const filterRef = useRef(null)
+  const gridRef = useRef(null)
+  const calendarRef = useRef(null)
   const [formData, setFormData] = useState({
     name: '', type: '', seats: '', price_per_day: '',
     has_driver: false, driver_fee: '', image_url: '',
     description: '', status: 'available'
   })
 
-  useEffect(() => {
-    fetchVehicles()
-  }, [])
+  useEffect(() => { fetchVehicles() }, [])
 
   useEffect(() => {
     const handleScroll = () => setShowTopBtn(window.scrollY > 300)
@@ -33,7 +35,6 @@ function VehiclesPage() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  // Close filter dropdown on outside click
   useEffect(() => {
     function handleClickOutside(e) {
       if (filterRef.current && !filterRef.current.contains(e.target)) {
@@ -44,6 +45,29 @@ function VehiclesPage() {
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
+  useEffect(() => {
+  if (selectedVehicle && calendarRef.current) {
+    setTimeout(() => {
+      const rect = calendarRef.current.getBoundingClientRect()
+      const scrollTop = window.scrollY + rect.top - 80
+      window.scrollTo({ top: scrollTop, behavior: 'smooth' })
+    }, 100)
+  }
+}, [selectedVehicle])
+
+  // Track number of columns in grid for row detection
+  useEffect(() => {
+    function updateCols() {
+      if (!gridRef.current) return
+      const width = gridRef.current.offsetWidth
+      if (width < 600) setCols(1)
+      else if (width < 900) setCols(2)
+      else setCols(3)
+    }
+    updateCols()
+    window.addEventListener('resize', updateCols)
+    return () => window.removeEventListener('resize', updateCols)
+  }, [vehicles])
 
   async function fetchVehicles() {
     setLoading(true)
@@ -51,7 +75,6 @@ function VehiclesPage() {
       .from('vehicles')
       .select('*')
       .order('created_at', { ascending: false })
-
     if (error) console.error('Error:', error)
     else setVehicles(data || [])
     setLoading(false)
@@ -59,10 +82,7 @@ function VehiclesPage() {
 
   function handleFormChange(e) {
     const { name, value, type, checked } = e.target
-    setFormData(prev => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : value
-    }))
+    setFormData(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }))
   }
 
   function openAddForm() {
@@ -78,14 +98,10 @@ function VehiclesPage() {
   function openEditForm(vehicle) {
     setEditingVehicle(vehicle)
     setFormData({
-      name: vehicle.name,
-      type: vehicle.type || '',
-      seats: vehicle.seats,
-      price_per_day: vehicle.price_per_day,
-      has_driver: vehicle.has_driver,
-      driver_fee: vehicle.driver_fee || '',
-      image_url: vehicle.image_url || '',
-      description: vehicle.description || '',
+      name: vehicle.name, type: vehicle.type || '',
+      seats: vehicle.seats, price_per_day: vehicle.price_per_day,
+      has_driver: vehicle.has_driver, driver_fee: vehicle.driver_fee || '',
+      image_url: vehicle.image_url || '', description: vehicle.description || '',
       status: vehicle.status || 'available'
     })
     setShowForm(true)
@@ -94,17 +110,14 @@ function VehiclesPage() {
   async function handleFormSubmit(e) {
     e.preventDefault()
     const vehicleData = {
-      name: formData.name,
-      type: formData.type,
+      name: formData.name, type: formData.type,
       seats: parseInt(formData.seats),
       price_per_day: parseFloat(formData.price_per_day),
       has_driver: formData.has_driver,
       driver_fee: formData.has_driver ? parseFloat(formData.driver_fee) || 0 : 0,
-      image_url: formData.image_url,
-      description: formData.description,
+      image_url: formData.image_url, description: formData.description,
       status: formData.status
     }
-
     if (editingVehicle) {
       const { error } = await supabase.from('vehicles').update(vehicleData).eq('id', editingVehicle.id)
       if (error) { alert('Error updating vehicle'); return }
@@ -112,7 +125,6 @@ function VehiclesPage() {
       const { error } = await supabase.from('vehicles').insert([vehicleData])
       if (error) { alert('Error adding vehicle'); return }
     }
-
     setShowForm(false)
     fetchVehicles()
   }
@@ -123,23 +135,24 @@ function VehiclesPage() {
     else {
       setConfirmDelete(null)
       setShowForm(false)
+      if (selectedVehicle?.id === confirmDelete.id) setSelectedVehicle(null)
       fetchVehicles()
     }
   }
 
   async function confirmAndToggle() {
     const newStatus = confirmToggle.status === 'available' ? 'unavailable' : 'available'
-    const { error } = await supabase
-      .from('vehicles')
-      .update({ status: newStatus })
-      .eq('id', confirmToggle.id)
-
+    const { error } = await supabase.from('vehicles').update({ status: newStatus }).eq('id', confirmToggle.id)
     if (error) alert('Error updating status')
     else {
       setConfirmToggle(null)
       setShowForm(false)
       fetchVehicles()
     }
+  }
+
+  function handleCardClick(vehicle) {
+    setSelectedVehicle(prev => prev?.id === vehicle.id ? null : vehicle)
   }
 
   const activeFilterCount = (statusFilter !== 'all' ? 1 : 0) + (seatsFilter ? 1 : 0)
@@ -150,6 +163,16 @@ function VehiclesPage() {
     const matchesSeats = !seatsFilter || v.seats >= parseInt(seatsFilter)
     return matchesSearch && matchesStatus && matchesSeats
   })
+
+  // Build rows for inli calendar insertion
+  const rows = []
+  for (let i = 0; i < filteredVehicles.length; i += cols) {
+    rows.push(filteredVehicles.slice(i, i + cols))
+  }
+
+  const selectedRowIndex = selectedVehicle
+    ? Math.floor(filteredVehicles.findIndex(v => v.id === selectedVehicle.id) / cols)
+    : -1
 
   if (loading) return <div className="vehicles-loading">Loading vehicles...</div>
 
@@ -176,8 +199,6 @@ function VehiclesPage() {
             className="vehicles-search"
           />
         </div>
-
-        {/* Filter Dropdown */}
         <div className="filter-dropdown-wrap" ref={filterRef}>
           <button
             className={`filter-dropdown-btn ${activeFilterCount > 0 ? 'has-filters' : ''}`}
@@ -189,18 +210,13 @@ function VehiclesPage() {
             Filter
             {activeFilterCount > 0 && <span className="filter-count">{activeFilterCount}</span>}
           </button>
-
           {showFilterDropdown && (
             <div className="filter-dropdown">
               <div className="filter-section">
                 <p className="filter-section-label">Status</p>
                 <div className="filter-options">
                   {['all', 'available', 'unavailable', 'maintenance'].map(s => (
-                    <button
-                      key={s}
-                      className={`filter-option ${statusFilter === s ? 'active' : ''}`}
-                      onClick={() => setStatusFilter(s)}
-                    >
+                    <button key={s} className={`filter-option ${statusFilter === s ? 'active' : ''}`} onClick={() => setStatusFilter(s)}>
                       {s.charAt(0).toUpperCase() + s.slice(1)}
                     </button>
                   ))}
@@ -210,90 +226,98 @@ function VehiclesPage() {
                 <p className="filter-section-label">Min. Seats</p>
                 <div className="filter-options">
                   {['', '2', '4', '6', '8'].map(s => (
-                    <button
-                      key={s}
-                      className={`filter-option ${seatsFilter === s ? 'active' : ''}`}
-                      onClick={() => setSeatsFilter(s)}
-                    >
+                    <button key={s} className={`filter-option ${seatsFilter === s ? 'active' : ''}`} onClick={() => setSeatsFilter(s)}>
                       {s ? `${s}+` : 'Any'}
                     </button>
                   ))}
                 </div>
               </div>
               {activeFilterCount > 0 && (
-                <button className="filter-clear" onClick={() => { setStatusFilter('all'); setSeatsFilter('') }}>
-                  Clear filters
-                </button>
+                <button className="filter-clear" onClick={() => { setStatusFilter('all'); setSeatsFilter('') }}>Clear filters</button>
               )}
             </div>
           )}
         </div>
       </div>
+      
+      <div className={`vehicles-main-layout ${selectedVehicle ? 'has-calendar' : ''}`}>
 
       {/* Vehicle Grid */}
-      <div className="vehicles-grid-admin">
+      <div className="vehicles-grid-admin" ref={gridRef}>
         {filteredVehicles.length === 0 ? (
           <div className="vehicles-empty">No vehicles found.</div>
         ) : (
-          filteredVehicles.map(vehicle => (
-            <div key={vehicle.id} className="vehicle-admin-card">
-              <div className="vehicle-admin-img-wrap">
-                <img
-                  src={vehicle.image_url || 'https://via.placeholder.com/300x200?text=No+Image'}
-                  alt={vehicle.name}
-                />
-                <span className={`vehicle-admin-status vehicle-admin-status--${vehicle.status}`}>
-                  {vehicle.status}
-                </span>
+          rows.map((row, rowIndex) => (
+            <div key={rowIndex} className="vehicle-grid-row">
+              <div className="vehicle-row-cards">
+                {row.map(vehicle => (
+                  <div
+                    key={vehicle.id}
+                    className={`vehicle-admin-card ${selectedVehicle?.id === vehicle.id ? 'selected' : ''}`}
+                    onClick={() => handleCardClick(vehicle)}
+                  >
+                    <div className="vehicle-admin-img-wrap">
+                      <img
+                        src={vehicle.image_url || 'https://via.placeholder.com/300x200?text=No+Image'}
+                        alt={vehicle.name}
+                      />
+                      <span className={`vehicle-admin-status vehicle-admin-status--${vehicle.status}`}>
+                        {vehicle.status}
+                      </span>
+                    </div>
+                    <div className="vehicle-admin-info">
+                      <h3 className="vehicle-admin-name">{vehicle.name}</h3>
+                      <p className="vehicle-admin-meta">{vehicle.type} · {vehicle.seats} seats</p>
+                      <p className="vehicle-admin-price">₱{Number(vehicle.price_per_day).toLocaleString()}/day</p>
+                    </div>
+                    <div className="vehicle-admin-actions" onClick={e => e.stopPropagation()}>
+                      <button className="edit-btn" onClick={() => openEditForm(vehicle)}>Edit</button>
+                    </div>
+                  </div>
+                ))}
               </div>
-              <div className="vehicle-admin-info">
-                <h3 className="vehicle-admin-name">{vehicle.name}</h3>
-                <p className="vehicle-admin-meta">{vehicle.type} · {vehicle.seats} seats</p>
-                <p className="vehicle-admin-price">₱{Number(vehicle.price_per_day).toLocaleString()}/day</p>
-              </div>
-              <div className="vehicle-admin-actions">
-                <button className="view-calendar-btn" onClick={() => setCalendarVehicle(vehicle)}>
-                  📅 View Calendar
-                </button>
-                <button className="edit-btn" onClick={() => openEditForm(vehicle)}>Edit</button>
-              </div>
+
+              {/* Mobile only — inline calendar */}
+              {selectedVehicle && selectedRowIndex === rowIndex && (
+                <div className="inline-calendar mobile-only" ref={calendarRef}>
+                  <div className="inline-calendar-header">
+                    <div>
+                      <h3 className="inline-calendar-title">{selectedVehicle.name}</h3>
+                      <p className="inline-calendar-sub">Tap card again to close</p>
+                    </div>
+                    <button className="inline-calendar-close" onClick={() => setSelectedVehicle(null)}>✕</button>
+                  </div>
+                  <VehicleCalendar vehicleId={selectedVehicle.id} />
+                </div>
+              )}
             </div>
           ))
         )}
       </div>
 
-      {/* Back to Top */}
-      {showTopBtn && (
-        <button className="back-to-top" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-          ↑ Top
-        </button>
-      )}
-
-      {/* Calendar Modal */}
-      {calendarVehicle && (
-        <div className="modal-overlay" onClick={() => setCalendarVehicle(null)}>
-          <div className="calendar-modal" onClick={e => e.stopPropagation()}>
-            <div className="calendar-modal-header">
-              <div>
-                <h3 className="calendar-panel-title">{calendarVehicle.name}</h3>
-                <p className="calendar-panel-sub">Booking availability</p>
-              </div>
-              <button className="calendar-close" onClick={() => setCalendarVehicle(null)}>✕</button>
+      {/* PC only — side panel */}
+      {selectedVehicle && (
+        <div className="calendar-side-panel desktop-only">
+          <div className="inline-calendar-header">
+            <div>
+              <h3 className="inline-calendar-title">{selectedVehicle.name}</h3>
+              <p className="inline-calendar-sub">Click card again to close</p>
             </div>
-            <VehicleCalendar vehicleId={calendarVehicle.id} />
+            <button className="inline-calendar-close" onClick={() => setSelectedVehicle(null)}>✕</button>
           </div>
+          <VehicleCalendar vehicleId={selectedVehicle.id} />
         </div>
       )}
-
+      </div>
+      
       {/* Add/Edit Form Modal */}
-      {showForm && (
+      {showForm && ReactDOM.createPortal(
         <div className="vehicle-form-overlay" onClick={() => setShowForm(false)}>
           <div className="vehicle-form-modal" onClick={e => e.stopPropagation()}>
             <div className="vehicle-form-header">
               <h2>{editingVehicle ? 'Edit Vehicle' : 'Add New Vehicle'}</h2>
               <button className="form-close-btn" onClick={() => setShowForm(false)}>✕</button>
             </div>
-
             <form onSubmit={handleFormSubmit}>
               <div className="form-row">
                 <div className="form-group">
@@ -312,7 +336,6 @@ function VehiclesPage() {
                   </select>
                 </div>
               </div>
-
               <div className="form-row">
                 <div className="form-group">
                   <label>Seats *</label>
@@ -323,7 +346,6 @@ function VehiclesPage() {
                   <input type="number" name="price_per_day" value={formData.price_per_day} onChange={handleFormChange} placeholder="e.g. 3500" min="0" required />
                 </div>
               </div>
-
               <div className="form-row">
                 <div className="form-group checkbox-group">
                   <label>
@@ -338,17 +360,14 @@ function VehiclesPage() {
                   </div>
                 )}
               </div>
-
               <div className="form-group">
                 <label>Image URL</label>
                 <input type="url" name="image_url" value={formData.image_url} onChange={handleFormChange} placeholder="https://example.com/car-photo.jpg" />
               </div>
-
               <div className="form-group">
                 <label>Description</label>
                 <textarea name="description" value={formData.description} onChange={handleFormChange} placeholder="Brief description of the vehicle..." rows="3" />
               </div>
-
               <div className="form-group">
                 <label>Status</label>
                 <select name="status" value={formData.status} onChange={handleFormChange}>
@@ -357,41 +376,32 @@ function VehiclesPage() {
                   <option value="unavailable">Unavailable</option>
                 </select>
               </div>
-
               {editingVehicle && (
                 <div className="form-danger-zone">
                   <p className="danger-zone-label">Danger Zone</p>
                   <div className="danger-zone-actions">
-                    <button
-                      type="button"
-                      className="toggle-availability-btn"
-                      onClick={() => setConfirmToggle(editingVehicle)}
-                    >
+                    <button type="button" className="toggle-availability-btn" onClick={() => setConfirmToggle(editingVehicle)}>
                       {editingVehicle.status === 'available' ? 'Mark as Unavailable' : 'Mark as Available'}
                     </button>
-                    <button
-                      type="button"
-                      className="delete-vehicle-btn"
-                      onClick={() => setConfirmDelete(editingVehicle)}
-                    >
+                    <button type="button" className="delete-vehicle-btn" onClick={() => setConfirmDelete(editingVehicle)}>
                       Delete Vehicle
                     </button>
                   </div>
                 </div>
               )}
-
               <div className="form-actions">
                 <button type="button" className="btn-ghost" onClick={() => setShowForm(false)}>Cancel</button>
                 <button type="submit" className="btn-primary">{editingVehicle ? 'Save Changes' : 'Add Vehicle'}</button>
               </div>
             </form>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* Confirm Toggle Modal */}
-      {confirmToggle && (
-        <div className="modal-overlay" onClick={() => setConfirmToggle(null)}>
+      {confirmToggle && ReactDOM.createPortal(
+        <div className="vehicle-form-overlay" onClick={() => setConfirmToggle(null)}>
           <div className="confirm-modal" onClick={e => e.stopPropagation()}>
             <h3>Change Availability</h3>
             <p>Mark <strong>{confirmToggle.name}</strong> as <strong>{confirmToggle.status === 'available' ? 'unavailable' : 'available'}</strong>?</p>
@@ -400,12 +410,13 @@ function VehiclesPage() {
               <button className="btn-primary" onClick={confirmAndToggle}>Yes, confirm</button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* Confirm Delete Modal */}
-      {confirmDelete && (
-        <div className="modal-overlay" onClick={() => setConfirmDelete(null)}>
+      {confirmDelete && ReactDOM.createPortal(
+        <div className="vehicle-form-overlay" onClick={() => setConfirmDelete(null)}>
           <div className="confirm-modal" onClick={e => e.stopPropagation()}>
             <h3>Delete Vehicle</h3>
             <p>Are you sure you want to delete <strong>{confirmDelete.name}</strong>? This cannot be undone.</p>
@@ -414,7 +425,8 @@ function VehiclesPage() {
               <button className="btn-danger-solid" onClick={confirmAndDelete}>Yes, Delete</button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   )
