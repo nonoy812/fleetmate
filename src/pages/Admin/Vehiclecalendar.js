@@ -2,10 +2,16 @@ import { useState, useEffect } from 'react'
 import { supabase } from '../../supabaseClient'
 import './Vehiclecalendar.css'
 
-function VehicleCalendar({ vehicleId }) {
+function VehicleCalendar({ vehicleId, highlightRange }) {
   const [bookings, setBookings] = useState([])
   const [loading, setLoading] = useState(true)
-  const [currentDate, setCurrentDate] = useState(new Date())
+  const [currentDate, setCurrentDate] = useState(() => {
+    if (highlightRange?.start) {
+      const [y, m] = highlightRange.start.split('-').map(Number)
+      return new Date(y, m - 1, 1)
+    }
+    return new Date()
+  })
 
   useEffect(() => {
     fetchBookings()
@@ -32,24 +38,32 @@ function VehicleCalendar({ vehicleId }) {
   }
 
   function getDateStatus(day) {
-  const year = currentDate.getFullYear()
-  const month = currentDate.getMonth()
-  const date = new Date(year, month, day)
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
+    const year = currentDate.getFullYear()
+    const month = currentDate.getMonth()
+    const date = new Date(year, month, day)
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
 
-  for (const booking of bookings) {
-    const [sy, sm, sd] = booking.pickup_date.split('-').map(Number)
-    const [ey, em, ed] = booking.return_date.split('-').map(Number)
-    const start = new Date(sy, sm - 1, sd)
-    const end = new Date(ey, em - 1, ed)
-
-    if (date >= start && date <= end) {
-      if (booking.status === 'approved' && end < today) return 'past'
-      return booking.status
+    if (highlightRange) {
+      const [hsy, hsm, hsd] = highlightRange.start.split('-').map(Number)
+      const [hey, hem, hed] = highlightRange.end.split('-').map(Number)
+      const hStart = new Date(hsy, hsm - 1, hsd)
+      const hEnd = new Date(hey, hem - 1, hed)
+      if (date >= hStart && date <= hEnd) return 'highlight'
     }
-  }
-  return null
+
+    for (const booking of bookings) {
+      const [sy, sm, sd] = booking.pickup_date.split('-').map(Number)
+      const [ey, em, ed] = booking.return_date.split('-').map(Number)
+      const start = new Date(sy, sm - 1, sd)
+      const end = new Date(ey, em - 1, ed)
+
+      if (date >= start && date <= end) {
+        if (booking.status === 'approved' && end < today) return 'past'
+        return booking.status
+      }
+    }
+    return null
   }
 
   function isToday(day) {
@@ -110,22 +124,33 @@ function VehicleCalendar({ vehicleId }) {
         })}
       </div>
 
+      {/* Legend — compact when in highlight mode */}
       <div className="vc-legend">
-        <div className="vc-legend-item">
-          <div className="vc-legend-dot vc-legend-dot--approved" />
-          <span>Approved ({approvedBookings.length})</span>
-        </div>
-        <div className="vc-legend-item">
-          <div className="vc-legend-dot vc-legend-dot--pending" />
-          <span>Pending ({pendingBookings.length})</span>
-        </div>
-        <div className="vc-legend-item">
-          <div className="vc-legend-dot vc-legend-dot--past" />
-          <span>Completed</span>
-        </div>
+        {highlightRange ? (
+          <div className="vc-legend-item">
+            <div className="vc-legend-dot vc-legend-dot--highlight" />
+            <span>This Booking</span>
+          </div>
+        ) : (
+          <>
+            <div className="vc-legend-item">
+              <div className="vc-legend-dot vc-legend-dot--approved" />
+              <span>Approved ({approvedBookings.length})</span>
+            </div>
+            <div className="vc-legend-item">
+              <div className="vc-legend-dot vc-legend-dot--pending" />
+              <span>Pending ({pendingBookings.length})</span>
+            </div>
+            <div className="vc-legend-item">
+              <div className="vc-legend-dot vc-legend-dot--past" />
+              <span>Completed</span>
+            </div>
+          </>
+        )}
       </div>
 
-      {bookings.length > 0 && (
+      {/* Bookings list — hidden in highlight mode */}
+      {bookings.length > 0 && !highlightRange && (
         <div className="vc-bookings">
           <p className="vc-bookings-title">Bookings</p>
           {bookings.map((b, i) => (

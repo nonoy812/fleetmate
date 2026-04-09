@@ -72,12 +72,6 @@
   border-radius: 6px;
 }
 
-.vc-day--past {
-  background: #f0f0f0;
-  color: #bbb;
-  font-weight: 400;
-}
-
 .vc-day--empty { background: transparent; }
 
 .vc-day--today {
@@ -98,9 +92,38 @@
   font-weight: 600;
 }
 
+.vc-day--past {
+  background: #f0f0f0;
+  color: #bbb;
+  font-weight: 400;
+}
+
+/* ── Highlight (this booking) — blinking green ── */
+.vc-day--highlight {
+  background: #059669;
+  color: #fff;
+  font-weight: 700;
+  animation: pulse-green 2s ease-in-out infinite;
+}
+
+@keyframes pulse-green {
+  0%, 100% {
+    background: #ffffff;
+    color: #059669;
+    border: 1.5px solid #059669;
+  }
+  50% {
+    background: #059669;
+    color: #fff;
+    border: 1.5px solid #059669;
+  }
+}
+
+/* ── Legend ── */
 .vc-legend {
   display: flex;
-  gap: 16px;
+  flex-wrap: wrap;
+  gap: 12px;
   margin-bottom: 20px;
   padding: 12px;
   background: #f8f7f4;
@@ -122,10 +145,12 @@
   flex-shrink: 0;
 }
 
-.vc-legend-dot--past { background: #f0f0f0; border: 1px solid #ddd; }
+.vc-legend-dot--highlight { background: #059669; }
 .vc-legend-dot--approved { background: #fee2e2; border: 1px solid #fca5a5; }
 .vc-legend-dot--pending { background: #fef3cd; border: 1px solid #fcd34d; }
+.vc-legend-dot--past { background: #f0f0f0; border: 1px solid #ddd; }
 
+/* ── Bookings List ── */
 .vc-bookings {
   border-top: 1px solid #f0ede8;
   padding-top: 16px;
