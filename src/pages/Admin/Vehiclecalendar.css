@@ -72,6 +72,12 @@
   border-radius: 6px;
 }
 
+.vc-day--past {
+  background: #f0f0f0;
+  color: #bbb;
+  font-weight: 400;
+}
+
 .vc-day--empty { background: transparent; }
 
 .vc-day--today {
@@ -116,6 +122,7 @@
   flex-shrink: 0;
 }
 
+.vc-legend-dot--past { background: #f0f0f0; border: 1px solid #ddd; }
 .vc-legend-dot--approved { background: #fee2e2; border: 1px solid #fca5a5; }
 .vc-legend-dot--pending { background: #fef3cd; border: 1px solid #fcd34d; }
 

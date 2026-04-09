@@ -2,7 +2,7 @@
 .overview {
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  gap: 24px;
   animation: fadeUp 0.5s ease both;
 }
 
@@ -32,10 +32,7 @@
   transition: transform 0.2s, box-shadow 0.2s;
 }
 
-.stat-card--clickable {
-  cursor: pointer;
-}
-
+.stat-card--clickable { cursor: pointer; }
 .stat-card--clickable:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 24px rgba(0,0,0,0.08);
@@ -84,7 +81,78 @@
   font-weight: 400;
 }
 
-/* ── Overview Section ── */
+/* ── Charts Row ── */
+.charts-row {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 16px;
+}
+
+/* ── Chart Card ── */
+.chart-card {
+  background: #fff;
+  border: 1px solid #ece9e3;
+  border-radius: 16px;
+  padding: 24px;
+}
+
+.chart-card--wide {
+  /* takes the larger column */
+}
+
+.chart-card--full {
+  /* full width */
+}
+
+.chart-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 17px;
+  font-weight: 700;
+  color: #111;
+  margin: 0 0 4px;
+}
+
+.chart-sub {
+  font-size: 12px;
+  color: #aaa;
+  margin: 0 0 20px;
+}
+
+.chart-empty {
+  text-align: center;
+  padding: 40px;
+  color: #ccc;
+  font-size: 14px;
+}
+
+/* ── Chart Tooltip ── */
+.chart-tooltip {
+  background: #111;
+  border-radius: 8px;
+  padding: 10px 14px;
+  border: none;
+}
+
+.chart-tooltip-label {
+  font-size: 12px;
+  color: #888;
+  margin: 0 0 4px;
+}
+
+.chart-tooltip-value {
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
+}
+
+.chart-tooltip-sub {
+  font-size: 12px;
+  color: #059669;
+  margin: 2px 0 0;
+}
+
+/* ── Overview Section (Pending) ── */
 .overview-section {
   background: #fff;
   border: 1px solid #ece9e3;
@@ -113,7 +181,6 @@
 .pending-list {
   display: flex;
   flex-direction: column;
-  gap: 0;
 }
 
 .pending-item {
@@ -126,14 +193,8 @@
   flex-wrap: wrap;
 }
 
-.pending-item:last-child {
-  border-bottom: none;
-  padding-bottom: 0;
-}
-
-.pending-item:first-child {
-  padding-top: 0;
-}
+.pending-item:last-child { border-bottom: none; padding-bottom: 0; }
+.pending-item:first-child { padding-top: 0; }
 
 .pending-vehicle {
   font-family: 'Playfair Display', serif;
@@ -152,9 +213,7 @@
   flex-wrap: wrap;
 }
 
-.meta-dot {
-  color: #ccc;
-}
+.meta-dot { color: #ccc; }
 
 /* ── Pending Actions ── */
 .pending-item-actions {
@@ -254,14 +313,18 @@
 }
 
 /* ── Responsive ── */
+@media (max-width: 1024px) {
+  .charts-row {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 768px) {
   .stats-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  .stat-value {
-    font-size: 24px;
-  }
+  .stat-value { font-size: 24px; }
 
   .pending-item {
     flex-direction: column;

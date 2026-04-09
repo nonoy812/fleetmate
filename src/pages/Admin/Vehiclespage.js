@@ -46,7 +46,7 @@ function VehiclesPage() {
   }, [])
 
   useEffect(() => {
-  if (selectedVehicle && calendarRef.current) {
+  if (selectedVehicle && calendarRef.current && window.innerWidth<=768) {
     setTimeout(() => {
       const rect = calendarRef.current.getBoundingClientRect()
       const scrollTop = window.scrollY + rect.top - 80
@@ -106,6 +106,29 @@ function VehiclesPage() {
     })
     setShowForm(true)
   }
+
+  async function handleImageUpload(e) {
+    const file = e.target.files[0]
+    if (!file) return
+
+    const fileExt = file.name.split('.').pop()
+    const fileName = `${Date.now()}.${fileExt}`
+
+    const { error } = await supabase.storage
+      .from('vehicles')
+      .upload(fileName, file, { upsert: true })
+
+    if (error) {
+      alert('Error uploading image')
+      return
+  }
+
+  const { data } = supabase.storage
+    .from('vehicles')
+    .getPublicUrl(fileName)
+
+  setFormData(prev => ({ ...prev, image_url: data.publicUrl }))
+}
 
   async function handleFormSubmit(e) {
     e.preventDefault()
@@ -361,8 +384,36 @@ function VehiclesPage() {
                 )}
               </div>
               <div className="form-group">
-                <label>Image URL</label>
-                <input type="url" name="image_url" value={formData.image_url} onChange={handleFormChange} placeholder="https://example.com/car-photo.jpg" />
+                <label>Vehicle Image</label>
+                <div className="image-upload-wrap">
+                  {formData.image_url ? (
+                    <div className="image-preview-wrap">
+                      <img src={formData.image_url} alt="Preview" className="image-preview" />
+                      <button
+                        type="button"
+                        className="image-remove-btn"
+                        onClick={() => setFormData(prev => ({ ...prev, image_url: '' }))}
+                      >
+                        ✕ Remove
+                      </button>
+                    </div>
+                  ) : (
+                    <label className="image-upload-btn">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                        <polyline points="17 8 12 3 7 8"/>
+                        <line x1="12" y1="3" x2="12" y2="15"/>
+                      </svg>
+                      Upload Photo
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                        style={{ display: 'none' }}
+                      />
+                    </label>
+                  )}
+                </div>
               </div>
               <div className="form-group">
                 <label>Description</label>

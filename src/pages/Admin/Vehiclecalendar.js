@@ -32,21 +32,24 @@ function VehicleCalendar({ vehicleId }) {
   }
 
   function getDateStatus(day) {
-    const year = currentDate.getFullYear()
-    const month = currentDate.getMonth()
-    const date = new Date(year, month, day)
+  const year = currentDate.getFullYear()
+  const month = currentDate.getMonth()
+  const date = new Date(year, month, day)
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
 
-    for (const booking of bookings) {
-      const [sy, sm, sd] = booking.pickup_date.split('-').map(Number)
-      const [ey, em, ed] = booking.return_date.split('-').map(Number)
-      const start = new Date(sy, sm - 1, sd)
-      const end = new Date(ey, em - 1, ed)
+  for (const booking of bookings) {
+    const [sy, sm, sd] = booking.pickup_date.split('-').map(Number)
+    const [ey, em, ed] = booking.return_date.split('-').map(Number)
+    const start = new Date(sy, sm - 1, sd)
+    const end = new Date(ey, em - 1, ed)
 
-      if (date >= start && date <= end) {
-        return booking.status
-      }
+    if (date >= start && date <= end) {
+      if (booking.status === 'approved' && end < today) return 'past'
+      return booking.status
     }
-    return null
+  }
+  return null
   }
 
   function isToday(day) {
@@ -115,6 +118,10 @@ function VehicleCalendar({ vehicleId }) {
         <div className="vc-legend-item">
           <div className="vc-legend-dot vc-legend-dot--pending" />
           <span>Pending ({pendingBookings.length})</span>
+        </div>
+        <div className="vc-legend-item">
+          <div className="vc-legend-dot vc-legend-dot--past" />
+          <span>Completed</span>
         </div>
       </div>
 
