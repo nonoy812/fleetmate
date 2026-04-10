@@ -232,16 +232,16 @@ function VehicleDetail() {
                   <label>Pickup Date</label>
                   <DatePicker
                     selected={pickupDateObj}
-                    onChange={date => { 
+                    onChange={date => {
                       if (!date) return
-                      setBookingError('')  
+                      setBookingError('')
                       setFormData(prev => ({
                         ...prev,
                         pickup_date: date.toLocaleDateString('en-CA'),
                         return_date: ''
-                        
                       }))
                     }}
+                    onFocus={e => e.target.blur()}
                     selectsStart
                     startDate={pickupDateObj}
                     endDate={returnDateObj}
@@ -262,12 +262,13 @@ function VehicleDetail() {
                     selected={returnDateObj}
                     onChange={date => {
                       if (!date) return
-                      setBookingError('')  
+                      setBookingError('')
                       setFormData(prev => ({
                         ...prev,
                         return_date: date.toLocaleDateString('en-CA')
                       }))
                     }}
+                    onFocus={e => e.target.blur()}
                     selectsEnd
                     startDate={pickupDateObj}
                     endDate={returnDateObj}

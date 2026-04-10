@@ -109,6 +109,7 @@ function Home() {
                   setPickupDate(date.toLocaleDateString('en-CA'))
                   setReturnDate('')
                 }}
+                onFocus={e => e.target.blur()}
                 minDate={new Date()}
                 selectsStart
                 startDate={pickupDate ? new Date(pickupDate + 'T00:00:00') : null}
@@ -129,6 +130,7 @@ function Home() {
                   if (!date) return
                   setReturnDate(date.toLocaleDateString('en-CA'))
                 }}
+                onFocus={e => e.target.blur()}
                 minDate={pickupDate ? new Date(new Date(pickupDate + 'T00:00:00').getTime() + 86400000) : new Date()}
                 selectsEnd
                 startDate={pickupDate ? new Date(pickupDate + 'T00:00:00') : null}
