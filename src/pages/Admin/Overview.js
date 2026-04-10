@@ -258,61 +258,6 @@ function Overview({ onNavigate }) {
           </div>
         ))}
       </div>
-
-      {/* Charts Row */}
-      <div className="charts-row">
-        <div className="chart-card chart-card--wide">
-          <h2 className="chart-title">Monthly Revenue</h2>
-          <p className="chart-sub">Last 6 months — completed bookings only</p>
-          <ResponsiveContainer width="100%" height={220}>
-            <BarChart data={monthlyRevenue} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f0ede8" />
-              <XAxis dataKey="month" tick={{ fontSize: 12, fill: '#888' }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fontSize: 11, fill: '#888' }} axisLine={false} tickLine={false} tickFormatter={v => `₱${(v/1000).toFixed(0)}k`} />
-              <Tooltip content={<CustomTooltip />} />
-              <Bar dataKey="revenue" fill="#059669" radius={[6, 6, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-
-        <div className="chart-card">
-          <h2 className="chart-title">Booking Status</h2>
-          <p className="chart-sub">All time breakdown</p>
-          {statusBreakdown.every(s => s.value === 0) ? (
-            <div className="chart-empty">No bookings yet</div>
-          ) : (
-            <ResponsiveContainer width="100%" height={220}>
-              <PieChart>
-                <Pie data={statusBreakdown} cx="50%" cy="45%" innerRadius={55} outerRadius={80} paddingAngle={3} dataKey="value">
-                  {statusBreakdown.map((entry, index) => (
-                    <Cell key={index} fill={entry.color} />
-                  ))}
-                </Pie>
-                <Legend iconType="circle" iconSize={8} formatter={(value) => <span style={{ fontSize: 12, color: '#555' }}>{value}</span>} />
-                <Tooltip formatter={(value) => [value, 'bookings']} />
-              </PieChart>
-            </ResponsiveContainer>
-          )}
-        </div>
-      </div>
-
-      {/* Top Vehicles */}
-      {topVehicles.length > 0 && (
-        <div className="chart-card chart-card--full">
-          <h2 className="chart-title">Top Vehicles</h2>
-          <p className="chart-sub">By number of approved bookings</p>
-          <ResponsiveContainer width="100%" height={topVehicles.length * 44 + 20}>
-            <BarChart data={topVehicles} layout="vertical" margin={{ top: 0, right: 16, left: 8, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f0ede8" horizontal={false} />
-              <XAxis type="number" tick={{ fontSize: 11, fill: '#888' }} axisLine={false} tickLine={false} />
-              <YAxis type="category" dataKey="name" tick={{ fontSize: 11, fill: '#555' }} axisLine={false} tickLine={false} width={110} />
-              <Tooltip content={<VehicleTooltip />} />
-              <Bar dataKey="bookings" fill="#059669" radius={[0, 6, 6, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      )}
-
       {/* Bottom Row — Pickups This Week + Week Calendar */}
       <div className="overview-bottom-row">
 
@@ -493,6 +438,62 @@ function Overview({ onNavigate }) {
         </div>,
         document.body
       )}
+      
+      {/* Top Vehicles */}
+      {topVehicles.length > 0 && (
+        <div className="chart-card chart-card--full">
+          <h2 className="chart-title">Top Vehicles</h2>
+          <p className="chart-sub">By number of approved bookings</p>
+          <ResponsiveContainer width="100%" height={topVehicles.length * 44 + 20}>
+            <BarChart data={topVehicles} layout="vertical" margin={{ top: 0, right: 16, left: 8, bottom: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#f0ede8" horizontal={false} />
+              <XAxis type="number" tick={{ fontSize: 11, fill: '#888' }} axisLine={false} tickLine={false} />
+              <YAxis type="category" dataKey="name" tick={{ fontSize: 11, fill: '#555' }} axisLine={false} tickLine={false} width={110} />
+              <Tooltip content={<VehicleTooltip />} />
+              <Bar dataKey="bookings" fill="#059669" radius={[0, 6, 6, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      )}
+      {/* Charts Row */}
+      <div className="charts-row">
+        <div className="chart-card chart-card--wide">
+          <h2 className="chart-title">Monthly Revenue</h2>
+          <p className="chart-sub">Last 6 months — completed bookings only</p>
+          <ResponsiveContainer width="100%" height={220}>
+            <BarChart data={monthlyRevenue} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#f0ede8" />
+              <XAxis dataKey="month" tick={{ fontSize: 12, fill: '#888' }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fontSize: 11, fill: '#888' }} axisLine={false} tickLine={false} tickFormatter={v => `₱${(v/1000).toFixed(0)}k`} />
+              <Tooltip content={<CustomTooltip />} />
+              <Bar dataKey="revenue" fill="#059669" radius={[6, 6, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+
+        <div className="chart-card">
+          <h2 className="chart-title">Booking Status</h2>
+          <p className="chart-sub">All time breakdown</p>
+          {statusBreakdown.every(s => s.value === 0) ? (
+            <div className="chart-empty">No bookings yet</div>
+          ) : (
+            <ResponsiveContainer width="100%" height={220}>
+              <PieChart>
+                <Pie data={statusBreakdown} cx="50%" cy="45%" innerRadius={55} outerRadius={80} paddingAngle={3} dataKey="value">
+                  {statusBreakdown.map((entry, index) => (
+                    <Cell key={index} fill={entry.color} />
+                  ))}
+                </Pie>
+                <Legend iconType="circle" iconSize={8} formatter={(value) => <span style={{ fontSize: 12, color: '#555' }}>{value}</span>} />
+                <Tooltip formatter={(value) => [value, 'bookings']} />
+              </PieChart>
+            </ResponsiveContainer>
+          )}
+        </div>
+      </div>
+
+
+      
     </div>
   )
 }
