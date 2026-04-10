@@ -112,6 +112,24 @@
 .booking-strip--approved { border-left-color: #059669; }
 .booking-strip--rejected { border-left-color: #ef4444; }
 .booking-strip--cancelled { border-left-color: #94a3b8; }
+.booking-strip--archived {opacity: 0.5; background: #f5f5f5;}
+
+.booking-archived-warning {
+  background: #fef3cd;
+  border: 1px solid #fcd34d;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 13px;
+  color: #92400e;
+  margin-bottom: 16px;
+}
+
+.action-approve:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  background: #d1fae5;
+}
+
 
 /* ── Vehicle + Driver ── */
 .booking-strip-vehicle-wrap {

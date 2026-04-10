@@ -74,7 +74,9 @@ function VehiclesPage() {
     const { data, error } = await supabase
       .from('vehicles')
       .select('*')
+      .neq('status', 'archived')
       .order('created_at', { ascending: false })
+
     if (error) console.error('Error:', error)
     else setVehicles(data || [])
     setLoading(false)
@@ -153,8 +155,28 @@ function VehiclesPage() {
   }
 
   async function confirmAndDelete() {
-    const { error } = await supabase.from('vehicles').delete().eq('id', confirmDelete.id)
-    if (error) alert('Error deleting vehicle. Make sure it has no bookings.')
+    // Check for upcoming approved bookings
+    const today = new Date().toISOString().split('T')[0]
+    const { data: upcomingBookings } = await supabase
+      .from('bookings')
+      .select('id')
+      .eq('vehicle_id', confirmDelete.id)
+      .eq('status', 'approved')
+      .gte('return_date', today)
+
+    if (upcomingBookings && upcomingBookings.length > 0) {
+      alert(`This vehicle has ${upcomingBookings.length} upcoming approved booking${upcomingBookings.length > 1 ? 's' : ''}. Please manage them in the Bookings page before deleting.`)
+      setConfirmDelete(null)
+      return
+    }
+
+    // Archive instead of delete
+    const { error } = await supabase
+      .from('vehicles')
+      .update({ status: 'archived' })
+      .eq('id', confirmDelete.id)
+
+    if (error) alert('Error archiving vehicle.')
     else {
       setConfirmDelete(null)
       setShowForm(false)
@@ -431,9 +453,6 @@ function VehiclesPage() {
                 <div className="form-danger-zone">
                   <p className="danger-zone-label">Danger Zone</p>
                   <div className="danger-zone-actions">
-                    <button type="button" className="toggle-availability-btn" onClick={() => setConfirmToggle(editingVehicle)}>
-                      {editingVehicle.status === 'available' ? 'Mark as Unavailable' : 'Mark as Available'}
-                    </button>
                     <button type="button" className="delete-vehicle-btn" onClick={() => setConfirmDelete(editingVehicle)}>
                       Delete Vehicle
                     </button>

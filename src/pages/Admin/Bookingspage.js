@@ -20,7 +20,7 @@ function BookingsPage({ onStatusChange }) {
     setLoading(true)
     let query = supabase
       .from('bookings')
-      .select('*, vehicles(name)')
+      .select('*, vehicles(name, status)')  // add status here
       .order('created_at', { ascending: false })
 
     if (filter !== 'all') {
@@ -34,6 +34,20 @@ function BookingsPage({ onStatusChange }) {
   }
 
   async function updateStatus(id, status) {
+    // If approving, check if vehicle is still active
+    if (status === 'approved') {
+      const { data: vehicle } = await supabase
+        .from('vehicles')
+        .select('status, name')
+        .eq('id', selectedBooking.vehicle_id)
+        .single()
+
+      if (vehicle?.status === 'archived') {
+        alert(`Cannot approve — ${vehicle.name} has been removed from the fleet. Please reject this booking instead.`)
+        return
+      }
+    }
+
     const { error } = await supabase
       .from('bookings')
       .update({ status })
@@ -141,7 +155,7 @@ function BookingsPage({ onStatusChange }) {
           {filtered.map(booking => (
             <div
               key={booking.id}
-              className={`booking-strip booking-strip--${booking.status}`}
+              className={`booking-strip booking-strip--${booking.status} ${booking.vehicles?.status === 'archived' ? 'booking-strip--archived' : ''}`}
               onClick={() => setSelectedBooking(booking)}
             >
               {/* Vehicle + driver */}
@@ -204,6 +218,11 @@ function BookingsPage({ onStatusChange }) {
               {selectedBooking.with_driver ? <DriverIcon /> : <NoDriverIcon />}
               <span>{selectedBooking.with_driver ? 'Driver Requested' : 'Self Drive'}</span>
             </div>
+            {selectedBooking.vehicles?.status === 'archived' && (
+              <div className="booking-archived-warning">
+                ⚠️ This vehicle has been removed from the fleet. Please reject this booking.
+              </div>
+            )}
 
             {/* Details Grid */}
             <div className="booking-detail-grid">
@@ -283,14 +302,20 @@ function BookingsPage({ onStatusChange }) {
                 <>
                   {selectedBooking.status === 'pending' && (
                     <>
-                      <button className="action-approve" onClick={() => setConfirming({ action: 'approved' })}>✓ Approve Booking</button>
-                      <button className="action-reject" onClick={() => setConfirming({ action: 'rejected' })}>✕ Reject Booking</button>
+                      <button
+                        className="action-approve"
+                        disabled={selectedBooking.vehicles?.status === 'archived'}
+                        onClick={() => setConfirming({ action: 'approved' })}
+                      >
+                        ✓ Approve Booking
+                      </button>
+                      <button className="action-reject" onClick={() => setConfirming({ action: 'rejected' })}>
+                        ✕ Reject Booking
+                      </button>
                     </>
                   )}
-                  {selectedBooking.status === 'approved' && (
-                    <button className="action-cancel" onClick={() => setConfirming({ action: 'cancelled' })}>Cancel Booking</button>
-                  )}
                 </>
+                
               )}
             </div>
           </div>
