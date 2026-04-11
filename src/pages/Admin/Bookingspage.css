@@ -22,10 +22,11 @@
   border: 1px solid #ece9e3;
   border-radius: 10px;
   padding: 4px;
+  flex-wrap: wrap;
 }
 
 .filter-tab {
-  padding: 8px 18px;
+  padding: 8px 14px;
   border: none;
   border-radius: 7px;
   background: transparent;
@@ -112,26 +113,9 @@
 .booking-strip--approved { border-left-color: #059669; }
 .booking-strip--rejected { border-left-color: #ef4444; }
 .booking-strip--cancelled { border-left-color: #94a3b8; }
-.booking-strip--archived {opacity: 0.5; background: #f5f5f5;}
+.booking-strip--archived { opacity: 0.5; background: #f5f5f5; }
 
-.booking-archived-warning {
-  background: #fef3cd;
-  border: 1px solid #fcd34d;
-  border-radius: 8px;
-  padding: 10px 14px;
-  font-size: 13px;
-  color: #92400e;
-  margin-bottom: 16px;
-}
-
-.action-approve:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-  background: #d1fae5;
-}
-
-
-/* ── Vehicle + Driver ── */
+/* ── Strip Fields ── */
 .booking-strip-vehicle-wrap {
   display: flex;
   flex-direction: column;
@@ -159,9 +143,6 @@
 .driver-indicator--yes { background: #dbeafe; color: #1d4ed8; }
 .driver-indicator--no { background: #f3f4f6; color: #6b7280; }
 
-
-
-/* ── Strip Fields ── */
 .booking-strip-field {
   display: flex;
   flex-direction: column;
@@ -182,18 +163,9 @@
   color: #111;
 }
 
-.booking-strip-dates {
-  font-size: 13px;
-  font-weight: 600;
-  color: #111;
-}
+.booking-strip-dates { font-size: 13px; font-weight: 600; color: #111; }
+.booking-strip-sub { font-size: 12px; color: #888; }
 
-.booking-strip-sub {
-  font-size: 12px;
-  color: #888;
-}
-
-/* ── Strip Right ── */
 .booking-strip-right {
   display: flex;
   flex-direction: column;
@@ -201,17 +173,8 @@
   gap: 6px;
 }
 
-.booking-strip-price {
-  font-size: 17px;
-  font-weight: 700;
-  color: #059669;
-}
-
-.booking-strip-date {
-  font-size: 11px;
-  color: #bbb;
-  white-space: nowrap;
-}
+.booking-strip-price { font-size: 17px; font-weight: 700; color: #059669; }
+.booking-strip-date { font-size: 11px; color: #bbb; white-space: nowrap; }
 
 /* ── Status Badge ── */
 .status-badge {
@@ -246,19 +209,6 @@
   box-sizing: border-box;
 }
 
-.booking-detail-phone {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 14px;
-  color: #059669;
-  font-weight: 500;
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-.booking-detail-phone:hover { color: #047857; }
-
 /* ── Booking Detail Modal ── */
 .booking-detail-modal {
   background: #fff;
@@ -289,11 +239,7 @@
   letter-spacing: -0.5px;
 }
 
-.booking-detail-created {
-  font-size: 12px;
-  color: #aaa;
-  margin: 0;
-}
+.booking-detail-created { font-size: 12px; color: #aaa; margin: 0; }
 
 .booking-detail-header-right {
   display: flex;
@@ -319,7 +265,18 @@
 
 .detail-close-btn:hover { border-color: #ef4444; color: #ef4444; }
 
-/* ── Driver Indicator in Modal ── */
+/* ── Archived Warning ── */
+.booking-archived-warning {
+  background: #fef3cd;
+  border: 1px solid #fcd34d;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 13px;
+  color: #92400e;
+  margin-bottom: 16px;
+}
+
+/* ── Driver Indicator ── */
 .booking-detail-driver {
   display: flex;
   align-items: center;
@@ -345,12 +302,7 @@
   border-radius: 12px;
 }
 
-.booking-detail-item {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
-
+.booking-detail-item { display: flex; flex-direction: column; gap: 3px; }
 .booking-detail-item--full { grid-column: 1 / -1; }
 
 .booking-detail-label {
@@ -361,17 +313,21 @@
   color: #aaa;
 }
 
-.booking-detail-value {
+.booking-detail-value { font-size: 14px; color: #333; font-weight: 400; }
+.booking-detail-price { font-size: 18px; font-weight: 700; color: #059669; }
+
+.booking-detail-phone {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   font-size: 14px;
-  color: #333;
-  font-weight: 400;
+  color: #059669;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.2s;
 }
 
-.booking-detail-price {
-  font-size: 18px;
-  font-weight: 700;
-  color: #059669;
-}
+.booking-detail-phone:hover { color: #047857; }
 
 /* ── Calendar in Modal ── */
 .booking-detail-calendar {
@@ -393,8 +349,8 @@
 /* ── Actions ── */
 .booking-detail-actions {
   display: flex;
+  flex-direction: column;
   gap: 10px;
-  flex-wrap: wrap;
 }
 
 .action-approve {
@@ -412,6 +368,7 @@
 }
 
 .action-approve:hover { background: #a7f3d0; }
+.action-approve:disabled { opacity: 0.4; cursor: not-allowed; }
 
 .action-reject {
   flex: 1;
@@ -430,7 +387,6 @@
 .action-reject:hover { background: #fecaca; }
 
 .action-cancel {
-  flex: 1;
   background: transparent;
   color: #ef4444;
   border: 1px solid #fca5a5;
@@ -441,11 +397,28 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
+  width: 100%;
 }
 
 .action-cancel:hover { background: #fee2e2; }
 
-/* ── Confirm Dialog inside Modal ── */
+/* ── Pending actions row ── */
+.booking-detail-actions > .action-approve,
+.booking-detail-actions > .action-reject {
+  display: block;
+}
+
+/* Put approve and reject side by side */
+.booking-detail-actions {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.action-cancel { flex: 1 1 100%; }
+
+/* ── Confirm Dialog ── */
 .confirm-dialog-modal {
   width: 100%;
   background: #f8f7f4;
@@ -461,10 +434,7 @@
   line-height: 1.5;
 }
 
-.confirm-dialog-btns {
-  display: flex;
-  gap: 10px;
-}
+.confirm-dialog-btns { display: flex; gap: 10px; }
 
 .confirm-yes-approve {
   flex: 1;
@@ -512,6 +482,88 @@
 
 .confirm-no:hover { border-color: #bbb; color: #333; }
 
+/* ── Cancel Flow ── */
+.cancel-flow {
+  width: 100%;
+  background: #fff5f5;
+  border: 1px solid #fee2e2;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cancel-flow-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: #ef4444;
+  margin: 0;
+}
+
+.cancel-flow-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #888;
+  margin: 0;
+}
+
+.cancel-by-options {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.cancel-by-btn {
+  flex: 1;
+  padding: 10px 14px;
+  border: 1px solid #ece9e3;
+  border-radius: 8px;
+  background: #fff;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: #555;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+}
+
+.cancel-by-btn:hover { border-color: #ef4444; color: #ef4444; }
+.cancel-by-btn.active {
+  background: #ef4444;
+  border-color: #ef4444;
+  color: #fff;
+}
+
+.cancel-reason-input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #ece9e3;
+  border-radius: 8px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  color: #111;
+  resize: vertical;
+  outline: none;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+  background: #fff;
+}
+
+.cancel-reason-input:focus { border-color: #ef4444; }
+
+.cancel-error {
+  font-size: 13px;
+  color: #ef4444;
+  margin: 0;
+}
+
+.cancel-flow-btns { display: flex; gap: 10px; }
+
 /* ── Animation ── */
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(16px); }
@@ -526,138 +578,43 @@
     gap: 12px;
   }
 
-  .booking-strip-vehicle-wrap {
-    grid-column: 1 / -1;
-  }
-
-  .booking-strip-right {
-    align-items: flex-end;
-  }
+  .booking-strip-vehicle-wrap { grid-column: 1 / -1; }
+  .booking-strip-right { align-items: flex-end; }
 }
 
 @media (max-width: 600px) {
-  .bookings-controls {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
+  .bookings-controls { flex-direction: column; align-items: stretch; }
   .bookings-search-wrap { min-width: unset; }
 
   .booking-strip {
     grid-template-columns: 1fr 1fr;
-    gap: 10px;
+    gap: 10px 16px;
     padding: 12px 14px;
   }
 
   .booking-strip-vehicle-wrap {
     grid-column: 1 / -1;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
   }
 
-  .booking-strip-vehicle {
-    font-size: 14px;
-  }
-
-  .booking-strip-value {
-    font-size: 12px;
-  }
-
-  .booking-strip-dates {
-    font-size: 12px;
-  }
-
-  .booking-strip-label {
-    font-size: 9px;
-  }
-
-  .booking-strip-sub {
-    font-size: 11px;
-  }
+  .booking-strip-vehicle { font-size: 14px; }
+  .booking-strip-value { font-size: 12px; }
+  .booking-strip-dates { font-size: 12px; }
+  .booking-strip-label { font-size: 9px; }
+  .booking-strip-sub { font-size: 11px; }
 
   .booking-strip-right {
     grid-column: 1 / -1;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
+    gap: 8px;
     flex-wrap: wrap;
-    gap: 8px;
   }
 
-  .booking-strip-price {
-    font-size: 15px;
-  }
-
-  .booking-detail-modal {
-    padding: 20px 20px 80px;
-    max-height: 85vh;
-  }
-
-  .booking-detail-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 600px) {
-  .bookings-controls {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .bookings-search-wrap { min-width: unset; }
-
-  .booking-strip {
-    display: grid;
-    grid-template-columns: 1.2fr 1fr 0.8fr;
-    grid-template-rows: auto;
-    gap: 0 12px;
-    padding: 12px 14px;
-    align-items: center;
-  }
-
-  /* Col 1: vehicle+driver spans full width */
-  .booking-strip-vehicle-wrap {
-    grid-column: 1 / -1;
-    flex-direction: row;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 8px;
-  }
-
-  .booking-strip-vehicle { font-size: 14px; }
-
-  /* Col 1: customer name + phone + duration */
-  .booking-strip-field:nth-child(2) {
-    grid-column: 1;
-    grid-row: 2;
-  }
-
-  /* Col 2: pickup + return stacked */
-  .booking-strip-field:nth-child(3) {
-    grid-column: 2;
-    grid-row: 2;
-  }
-
-  .booking-strip-field:nth-child(4) {
-    grid-column: 2;
-    grid-row: 3;
-    margin-top: 4px;
-  }
-
-  /* Col 3: price + status */
-  .booking-strip-right {
-    grid-column: 3;
-    grid-row: 2 / 4;
-    flex-direction: column;
-    align-items: flex-end;
-    justify-content: center;
-    gap: 6px;
-  }
-
-  .booking-strip-label { font-size: 9px; }
-  .booking-strip-value { font-size: 12px; font-weight: 600; }
-  .booking-strip-dates { font-size: 12px; }
-  .booking-strip-sub { font-size: 11px; color: #aaa; }
-  .booking-strip-price { font-size: 14px; }
-
+  .booking-strip-price { font-size: 15px; }
   .booking-strip-date { display: none; }
 
   .booking-detail-modal {
@@ -665,7 +622,6 @@
     max-height: 85vh;
   }
 
-  .booking-detail-grid {
-    grid-template-columns: 1fr 1fr;
-  }
+  .booking-detail-grid { grid-template-columns: 1fr 1fr; }
+  .cancel-by-options { flex-direction: column; }
 }

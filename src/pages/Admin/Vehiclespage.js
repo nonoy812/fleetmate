@@ -18,6 +18,7 @@ function VehiclesPage() {
   const [seatsFilter, setSeatsFilter] = useState('')
   const [showTopBtn, setShowTopBtn] = useState(false)
   const [cols, setCols] = useState(3)
+  const [uploading, setUploading] = useState(false)
   const filterRef = useRef(null)
   const gridRef = useRef(null)
   const calendarRef = useRef(null)
@@ -46,16 +47,15 @@ function VehiclesPage() {
   }, [])
 
   useEffect(() => {
-  if (selectedVehicle && calendarRef.current && window.innerWidth<=768) {
-    setTimeout(() => {
-      const rect = calendarRef.current.getBoundingClientRect()
-      const scrollTop = window.scrollY + rect.top - 80
-      window.scrollTo({ top: scrollTop, behavior: 'smooth' })
-    }, 100)
-  }
-}, [selectedVehicle])
+    if (selectedVehicle && calendarRef.current && window.innerWidth <= 768) {
+      setTimeout(() => {
+        const rect = calendarRef.current.getBoundingClientRect()
+        const scrollTop = window.scrollY + rect.top - 80
+        window.scrollTo({ top: scrollTop, behavior: 'smooth' })
+      }, 100)
+    }
+  }, [selectedVehicle])
 
-  // Track number of columns in grid for row detection
   useEffect(() => {
     function updateCols() {
       if (!gridRef.current) return
@@ -113,6 +113,8 @@ function VehiclesPage() {
     const file = e.target.files[0]
     if (!file) return
 
+    setUploading(true)
+
     const fileExt = file.name.split('.').pop()
     const fileName = `${Date.now()}.${fileExt}`
 
@@ -122,15 +124,17 @@ function VehiclesPage() {
 
     if (error) {
       alert('Error uploading image')
+      setUploading(false)
       return
+    }
+
+    const { data } = supabase.storage
+      .from('vehicles')
+      .getPublicUrl(fileName)
+
+    setFormData(prev => ({ ...prev, image_url: data.publicUrl }))
+    setUploading(false)
   }
-
-  const { data } = supabase.storage
-    .from('vehicles')
-    .getPublicUrl(fileName)
-
-  setFormData(prev => ({ ...prev, image_url: data.publicUrl }))
-}
 
   async function handleFormSubmit(e) {
     e.preventDefault()
@@ -155,7 +159,6 @@ function VehiclesPage() {
   }
 
   async function confirmAndDelete() {
-    // Check for upcoming approved bookings
     const today = new Date().toISOString().split('T')[0]
     const { data: upcomingBookings } = await supabase
       .from('bookings')
@@ -170,7 +173,6 @@ function VehiclesPage() {
       return
     }
 
-    // Archive instead of delete
     const { error } = await supabase
       .from('vehicles')
       .update({ status: 'archived' })
@@ -209,7 +211,6 @@ function VehiclesPage() {
     return matchesSearch && matchesStatus && matchesSeats
   })
 
-  // Build rows for inli calendar insertion
   const rows = []
   for (let i = 0; i < filteredVehicles.length; i += cols) {
     rows.push(filteredVehicles.slice(i, i + cols))
@@ -284,77 +285,77 @@ function VehiclesPage() {
           )}
         </div>
       </div>
-      
+
       <div className={`vehicles-main-layout ${selectedVehicle ? 'has-calendar' : ''}`}>
 
-      {/* Vehicle Grid */}
-      <div className="vehicles-grid-admin" ref={gridRef}>
-        {filteredVehicles.length === 0 ? (
-          <div className="vehicles-empty">No vehicles found.</div>
-        ) : (
-          rows.map((row, rowIndex) => (
-            <div key={rowIndex} className="vehicle-grid-row">
-              <div className="vehicle-row-cards">
-                {row.map(vehicle => (
-                  <div
-                    key={vehicle.id}
-                    className={`vehicle-admin-card ${selectedVehicle?.id === vehicle.id ? 'selected' : ''}`}
-                    onClick={() => handleCardClick(vehicle)}
-                  >
-                    <div className="vehicle-admin-img-wrap">
-                      <img
-                        src={vehicle.image_url || 'https://via.placeholder.com/300x200?text=No+Image'}
-                        alt={vehicle.name}
-                      />
-                      <span className={`vehicle-admin-status vehicle-admin-status--${vehicle.status}`}>
-                        {vehicle.status}
-                      </span>
+        {/* Vehicle Grid */}
+        <div className="vehicles-grid-admin" ref={gridRef}>
+          {filteredVehicles.length === 0 ? (
+            <div className="vehicles-empty">No vehicles found.</div>
+          ) : (
+            rows.map((row, rowIndex) => (
+              <div key={rowIndex} className="vehicle-grid-row">
+                <div className="vehicle-row-cards">
+                  {row.map(vehicle => (
+                    <div
+                      key={vehicle.id}
+                      className={`vehicle-admin-card ${selectedVehicle?.id === vehicle.id ? 'selected' : ''}`}
+                      onClick={() => handleCardClick(vehicle)}
+                    >
+                      <div className="vehicle-admin-img-wrap">
+                        <img
+                          src={vehicle.image_url || 'https://via.placeholder.com/300x200?text=No+Image'}
+                          alt={vehicle.name}
+                        />
+                        <span className={`vehicle-admin-status vehicle-admin-status--${vehicle.status}`}>
+                          {vehicle.status}
+                        </span>
+                      </div>
+                      <div className="vehicle-admin-info">
+                        <h3 className="vehicle-admin-name">{vehicle.name}</h3>
+                        <p className="vehicle-admin-meta">{vehicle.type} · {vehicle.seats} seats</p>
+                        <p className="vehicle-admin-price">₱{Number(vehicle.price_per_day).toLocaleString()}/day</p>
+                      </div>
+                      <div className="vehicle-admin-actions" onClick={e => e.stopPropagation()}>
+                        <button className="edit-btn" onClick={() => openEditForm(vehicle)}>Edit</button>
+                      </div>
                     </div>
-                    <div className="vehicle-admin-info">
-                      <h3 className="vehicle-admin-name">{vehicle.name}</h3>
-                      <p className="vehicle-admin-meta">{vehicle.type} · {vehicle.seats} seats</p>
-                      <p className="vehicle-admin-price">₱{Number(vehicle.price_per_day).toLocaleString()}/day</p>
-                    </div>
-                    <div className="vehicle-admin-actions" onClick={e => e.stopPropagation()}>
-                      <button className="edit-btn" onClick={() => openEditForm(vehicle)}>Edit</button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Mobile only — inline calendar */}
-              {selectedVehicle && selectedRowIndex === rowIndex && (
-                <div className="inline-calendar mobile-only" ref={calendarRef}>
-                  <div className="inline-calendar-header">
-                    <div>
-                      <h3 className="inline-calendar-title">{selectedVehicle.name}</h3>
-                      <p className="inline-calendar-sub">Tap card again to close</p>
-                    </div>
-                    <button className="inline-calendar-close" onClick={() => setSelectedVehicle(null)}>✕</button>
-                  </div>
-                  <VehicleCalendar vehicleId={selectedVehicle.id} />
+                  ))}
                 </div>
-              )}
+
+                {/* Mobile only — inline calendar */}
+                {selectedVehicle && selectedRowIndex === rowIndex && (
+                  <div className="inline-calendar mobile-only" ref={calendarRef}>
+                    <div className="inline-calendar-header">
+                      <div>
+                        <h3 className="inline-calendar-title">{selectedVehicle.name}</h3>
+                        <p className="inline-calendar-sub">Tap card again to close</p>
+                      </div>
+                      <button className="inline-calendar-close" onClick={() => setSelectedVehicle(null)}>✕</button>
+                    </div>
+                    <VehicleCalendar vehicleId={selectedVehicle.id} />
+                  </div>
+                )}
+              </div>
+            ))
+          )}
+        </div>
+
+        {/* PC only — side panel */}
+        {selectedVehicle && (
+          <div className="calendar-side-panel desktop-only">
+            <div className="inline-calendar-header">
+              <div>
+                <h3 className="inline-calendar-title">{selectedVehicle.name}</h3>
+                <p className="inline-calendar-sub">Click card again to close</p>
+              </div>
+              <button className="inline-calendar-close" onClick={() => setSelectedVehicle(null)}>✕</button>
             </div>
-          ))
+            <VehicleCalendar vehicleId={selectedVehicle.id} />
+          </div>
         )}
       </div>
 
-      {/* PC only — side panel */}
-      {selectedVehicle && (
-        <div className="calendar-side-panel desktop-only">
-          <div className="inline-calendar-header">
-            <div>
-              <h3 className="inline-calendar-title">{selectedVehicle.name}</h3>
-              <p className="inline-calendar-sub">Click card again to close</p>
-            </div>
-            <button className="inline-calendar-close" onClick={() => setSelectedVehicle(null)}>✕</button>
-          </div>
-          <VehicleCalendar vehicleId={selectedVehicle.id} />
-        </div>
-      )}
-      </div>
-      
       {/* Add/Edit Form Modal */}
       {showForm && ReactDOM.createPortal(
         <div className="vehicle-form-overlay" onClick={() => setShowForm(false)}>
@@ -405,6 +406,8 @@ function VehiclesPage() {
                   </div>
                 )}
               </div>
+
+              {/* Image Upload */}
               <div className="form-group">
                 <label>Vehicle Image</label>
                 <div className="image-upload-wrap">
@@ -418,6 +421,11 @@ function VehiclesPage() {
                       >
                         ✕ Remove
                       </button>
+                    </div>
+                  ) : uploading ? (
+                    <div className="image-uploading">
+                      <div className="image-upload-spinner" />
+                      <span>Uploading...</span>
                     </div>
                   ) : (
                     <label className="image-upload-btn">
@@ -437,6 +445,7 @@ function VehiclesPage() {
                   )}
                 </div>
               </div>
+
               <div className="form-group">
                 <label>Description</label>
                 <textarea name="description" value={formData.description} onChange={handleFormChange} placeholder="Brief description of the vehicle..." rows="3" />
@@ -461,7 +470,9 @@ function VehiclesPage() {
               )}
               <div className="form-actions">
                 <button type="button" className="btn-ghost" onClick={() => setShowForm(false)}>Cancel</button>
-                <button type="submit" className="btn-primary">{editingVehicle ? 'Save Changes' : 'Add Vehicle'}</button>
+                <button type="submit" className="btn-primary" disabled={uploading}>
+                  {editingVehicle ? 'Save Changes' : 'Add Vehicle'}
+                </button>
               </div>
             </form>
           </div>
@@ -497,6 +508,11 @@ function VehiclesPage() {
           </div>
         </div>,
         document.body
+      )}
+
+      {/* Back to Top */}
+      {showTopBtn && (
+        <button className="back-to-top" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>↑ Top</button>
       )}
     </div>
   )

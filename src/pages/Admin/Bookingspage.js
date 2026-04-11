@@ -12,6 +12,12 @@ function BookingsPage({ onStatusChange }) {
   const [selectedBooking, setSelectedBooking] = useState(null)
   const [confirming, setConfirming] = useState(null)
 
+  // Cancellation state
+  const [cancelFlow, setCancelFlow] = useState(false)
+  const [cancelledBy, setCancelledBy] = useState('')
+  const [cancellationReason, setCancellationReason] = useState('')
+  const [cancelError, setCancelError] = useState('')
+
   useEffect(() => {
     fetchBookings()
   }, [filter])
@@ -20,7 +26,7 @@ function BookingsPage({ onStatusChange }) {
     setLoading(true)
     let query = supabase
       .from('bookings')
-      .select('*, vehicles(name, status)')  // add status here
+      .select('*, vehicles(name, status)')
       .order('created_at', { ascending: false })
 
     if (filter !== 'all') {
@@ -34,20 +40,6 @@ function BookingsPage({ onStatusChange }) {
   }
 
   async function updateStatus(id, status) {
-    // If approving, check if vehicle is still active
-    if (status === 'approved') {
-      const { data: vehicle } = await supabase
-        .from('vehicles')
-        .select('status, name')
-        .eq('id', selectedBooking.vehicle_id)
-        .single()
-
-      if (vehicle?.status === 'archived') {
-        alert(`Cannot approve — ${vehicle.name} has been removed from the fleet. Please reject this booking instead.`)
-        return
-      }
-    }
-
     const { error } = await supabase
       .from('bookings')
       .update({ status })
@@ -61,6 +53,78 @@ function BookingsPage({ onStatusChange }) {
       fetchBookings()
       onStatusChange()
     }
+  }
+
+  async function handleApprove() {
+    if (selectedBooking.vehicles?.status === 'archived') return
+
+    const { data: vehicle } = await supabase
+      .from('vehicles')
+      .select('status, name')
+      .eq('id', selectedBooking.vehicle_id)
+      .single()
+
+    if (vehicle?.status === 'archived') {
+      alert(`Cannot approve — ${vehicle.name} has been removed from the fleet. Please reject this booking instead.`)
+      return
+    }
+
+    await updateStatus(selectedBooking.id, 'approved')
+  }
+
+  async function handleCancelSubmit() {
+    if (!cancelledBy) {
+      setCancelError('Please select who is cancelling.')
+      return
+    }
+    if (!cancellationReason.trim()) {
+      setCancelError('Please provide a reason for cancellation.')
+      return
+    }
+
+    const { error } = await supabase
+      .from('bookings')
+      .update({
+        status: 'cancelled',
+        cancelled_by: cancelledBy,
+        cancellation_reason: cancellationReason.trim()
+      })
+      .eq('id', selectedBooking.id)
+
+    if (error) {
+      alert('Error cancelling booking')
+    } else {
+      setCancelFlow(false)
+      setCancelledBy('')
+      setCancellationReason('')
+      setCancelError('')
+      setSelectedBooking(null)
+      fetchBookings()
+      onStatusChange()
+    }
+  }
+
+  function openCancelFlow() {
+    setCancelFlow(true)
+    setCancelledBy('')
+    setCancellationReason('')
+    setCancelError('')
+  }
+
+  function closeCancelFlow() {
+    setCancelFlow(false)
+    setCancelledBy('')
+    setCancellationReason('')
+    setCancelError('')
+  }
+
+  function closeModal() {
+    setSelectedBooking(null)
+    setConfirming(null)
+    setCancelFlow(false)
+    setCancelledBy('')
+    setCancellationReason('')
+    setCancelError('')
   }
 
   function formatDate(date) {
@@ -91,7 +155,7 @@ function BookingsPage({ onStatusChange }) {
     )
   })
 
-  const filterTabs = ['pending', 'approved', 'rejected', 'all']
+  const filterTabs = ['pending', 'approved',  'rejected','cancelled', 'all']
 
   const DriverIcon = () => (
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -167,18 +231,20 @@ function BookingsPage({ onStatusChange }) {
                 </div>
               </div>
 
-              {/* Customer info */}
+              {/* Customer */}
               <div className="booking-strip-field">
                 <span className="booking-strip-label">Customer</span>
                 <span className="booking-strip-value">{booking.customer_name}</span>
                 <span className="booking-strip-sub">{booking.customer_phone}</span>
               </div>
 
-              {/* Dates */}
+              {/* Pickup */}
               <div className="booking-strip-field">
                 <span className="booking-strip-label">Pickup</span>
                 <span className="booking-strip-value booking-strip-dates">{formatDate(booking.pickup_date)}</span>
               </div>
+
+              {/* Return */}
               <div className="booking-strip-field">
                 <span className="booking-strip-label">Return</span>
                 <span className="booking-strip-value booking-strip-dates">{formatDate(booking.return_date)}</span>
@@ -198,10 +264,10 @@ function BookingsPage({ onStatusChange }) {
 
       {/* Booking Detail Modal */}
       {selectedBooking && ReactDOM.createPortal(
-        <div className="modal-overlay" onClick={() => { setSelectedBooking(null); setConfirming(null) }}>
+        <div className="modal-overlay" onClick={closeModal}>
           <div className="booking-detail-modal" onClick={e => e.stopPropagation()}>
 
-            {/* Modal Header */}
+            {/* Header */}
             <div className="booking-detail-header">
               <div>
                 <h2 className="booking-detail-vehicle">{selectedBooking.vehicles?.name || 'Unknown Vehicle'}</h2>
@@ -209,20 +275,22 @@ function BookingsPage({ onStatusChange }) {
               </div>
               <div className="booking-detail-header-right">
                 <span className={`status-badge ${selectedBooking.status}`}>{selectedBooking.status}</span>
-                <button className="detail-close-btn" onClick={() => { setSelectedBooking(null); setConfirming(null) }}>✕</button>
+                <button className="detail-close-btn" onClick={closeModal}>✕</button>
               </div>
             </div>
+
+            {/* Archived Warning */}
+            {selectedBooking.vehicles?.status === 'archived' && (
+              <div className="booking-archived-warning">
+                ⚠️ This vehicle has been removed from the fleet. Please reject this booking.
+              </div>
+            )}
 
             {/* Driver indicator */}
             <div className={`booking-detail-driver ${selectedBooking.with_driver ? 'with-driver' : 'no-driver'}`}>
               {selectedBooking.with_driver ? <DriverIcon /> : <NoDriverIcon />}
               <span>{selectedBooking.with_driver ? 'Driver Requested' : 'Self Drive'}</span>
             </div>
-            {selectedBooking.vehicles?.status === 'archived' && (
-              <div className="booking-archived-warning">
-                ⚠️ This vehicle has been removed from the fleet. Please reject this booking.
-              </div>
-            )}
 
             {/* Details Grid */}
             <div className="booking-detail-grid">
@@ -265,6 +333,24 @@ function BookingsPage({ onStatusChange }) {
                   <span className="booking-detail-value">{selectedBooking.notes}</span>
                 </div>
               )}
+
+              {/* Cancellation Info — show if cancelled */}
+              {selectedBooking.status === 'cancelled' && (
+                <>
+                  <div className="booking-detail-item booking-detail-item--full">
+                    <span className="booking-detail-label">Cancelled By</span>
+                    <span className="booking-detail-value">
+                      {selectedBooking.cancelled_by === 'customer' ? '👤 Customer Request' : '🔧 Other / Admin'}
+                    </span>
+                  </div>
+                  {selectedBooking.cancellation_reason && (
+                    <div className="booking-detail-item booking-detail-item--full">
+                      <span className="booking-detail-label">Reason</span>
+                      <span className="booking-detail-value">{selectedBooking.cancellation_reason}</span>
+                    </div>
+                  )}
+                </>
+              )}
             </div>
 
             {/* Vehicle Calendar */}
@@ -281,42 +367,89 @@ function BookingsPage({ onStatusChange }) {
 
             {/* Actions */}
             <div className="booking-detail-actions">
-              {confirming ? (
+
+              {/* Pending actions */}
+              {selectedBooking.status === 'pending' && !confirming && (
+                <>
+                  <button
+                    className="action-approve"
+                    disabled={selectedBooking.vehicles?.status === 'archived'}
+                    onClick={() => setConfirming({ action: 'approved' })}
+                  >
+                    ✓ Approve Booking
+                  </button>
+                  <button className="action-reject" onClick={() => setConfirming({ action: 'rejected' })}>
+                    ✕ Reject Booking
+                  </button>
+                </>
+              )}
+
+              {/* Approved actions */}
+              {selectedBooking.status === 'approved' && !cancelFlow && (
+                <button className="action-cancel" onClick={openCancelFlow}>
+                  Cancel Booking
+                </button>
+              )}
+
+              {/* Confirm approve/reject */}
+              {confirming && (
                 <div className="confirm-dialog-modal">
                   <p className="confirm-dialog-text">
-                    {confirming.action === 'approved' && 'Approve this booking?'}
-                    {confirming.action === 'rejected' && 'Reject this booking? The customer will need to be informed manually.'}
-                    {confirming.action === 'cancelled' && 'Cancel this approved booking? The customer will need to be informed manually.'}
+                    {confirming.action === 'approved' ? 'Approve this booking?' : 'Reject this booking? The customer will need to be informed manually.'}
                   </p>
                   <div className="confirm-dialog-btns">
                     <button
                       className={`confirm-yes-${confirming.action === 'approved' ? 'approve' : 'reject'}`}
-                      onClick={() => updateStatus(selectedBooking.id, confirming.action)}
+                      onClick={() => confirming.action === 'approved' ? handleApprove() : updateStatus(selectedBooking.id, 'rejected')}
                     >
-                      Yes, {confirming.action === 'approved' ? 'Approve' : confirming.action === 'rejected' ? 'Reject' : 'Cancel'}
+                      Yes, {confirming.action === 'approved' ? 'Approve' : 'Reject'}
                     </button>
                     <button className="confirm-no" onClick={() => setConfirming(null)}>Go Back</button>
                   </div>
                 </div>
-              ) : (
-                <>
-                  {selectedBooking.status === 'pending' && (
-                    <>
-                      <button
-                        className="action-approve"
-                        disabled={selectedBooking.vehicles?.status === 'archived'}
-                        onClick={() => setConfirming({ action: 'approved' })}
-                      >
-                        ✓ Approve Booking
-                      </button>
-                      <button className="action-reject" onClick={() => setConfirming({ action: 'rejected' })}>
-                        ✕ Reject Booking
-                      </button>
-                    </>
-                  )}
-                </>
-                
               )}
+
+              {/* Cancel flow */}
+              {cancelFlow && (
+                <div className="cancel-flow">
+                  <p className="cancel-flow-title">Cancel Booking</p>
+
+                  <p className="cancel-flow-label">Who is cancelling?</p>
+                  <div className="cancel-by-options">
+                    <button
+                      className={`cancel-by-btn ${cancelledBy === 'customer' ? 'active' : ''}`}
+                      onClick={() => setCancelledBy('customer')}
+                    >
+                      👤 Customer Request
+                    </button>
+                    <button
+                      className={`cancel-by-btn ${cancelledBy === 'other' ? 'active' : ''}`}
+                      onClick={() => setCancelledBy('other')}
+                    >
+                      🔧 Other / Admin
+                    </button>
+                  </div>
+
+                  <p className="cancel-flow-label">Reason for cancellation *</p>
+                  <textarea
+                    className="cancel-reason-input"
+                    placeholder="e.g. Customer called to cancel, vehicle unavailable..."
+                    value={cancellationReason}
+                    onChange={e => { setCancellationReason(e.target.value); setCancelError('') }}
+                    rows="3"
+                  />
+
+                  {cancelError && <p className="cancel-error">{cancelError}</p>}
+
+                  <div className="cancel-flow-btns">
+                    <button className="confirm-yes-reject" onClick={handleCancelSubmit}>
+                      Confirm Cancellation
+                    </button>
+                    <button className="confirm-no" onClick={closeCancelFlow}>Go Back</button>
+                  </div>
+                </div>
+              )}
+
             </div>
           </div>
         </div>,
