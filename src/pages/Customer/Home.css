@@ -106,16 +106,53 @@
   z-index: 2;
   margin-top: 52px;
   background: #141414;
-  border: 1px solid #222;
-  border-radius: 16px;
-  padding: 14px 14px 14px 14px;
+  border: 2px solid rgba(5, 150, 105, 0.5);
+  border-radius: 20px;
+  padding: 20px;
   display: flex;
   align-items: center;
   gap: 0;
-  max-width: 900px;
+  max-width: 1000px;
+  width: 100%;
   animation: fadeUp 0.8s 0.15s ease both;
   flex-wrap: wrap;
+  box-shadow: 0 0 40px rgba(5, 150, 105, 0.2), 0 8px 40px rgba(0,0,0,0.4);
 }
+
+/* ── Home DatePicker Input ── */
+.home-date-input {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #111;
+  font-size: 15px;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 400;
+  padding: 0;
+  cursor: pointer;
+  width: 100%;
+}
+
+/* ── Seats Select ── */
+.search-field select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23059669' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 4px center;
+  padding-right: 20px;
+  color: #111;
+  font-size: 15px;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 400;
+  cursor: pointer;
+}
+
+.search-field select option {
+  background: #fff;
+  color: #111;
+}
+
 
 .search-fields {
   display: flex;
@@ -203,6 +240,130 @@
   font-size: 13px;
   padding: 8px 20px 4px;
 }
+
+
+
+/* ── Calendar Popup ── */
+.dark-calendar {
+  background: #111 !important;
+  border: 1px solid #1e1e1e !important;
+  border-radius: 12px !important;
+  font-family: 'DM Sans', sans-serif !important;
+  padding: 8px !important;
+}
+
+/* Header (Month/Year + arrows) */
+.dark-calendar .react-datepicker__header {
+  background: #111 !important;
+  border-bottom: 1px solid #1e1e1e !important;
+  border-radius: 10px 10px 0 0 !important;
+  padding-top: 12px !important;
+}
+
+.dark-calendar .react-datepicker__current-month {
+  color: #fff !important;
+  font-family: 'Playfair Display', serif !important;
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  margin-bottom: 8px !important;
+}
+
+.dark-calendar .react-datepicker__navigation-icon::before {
+  border-color: #555 !important;
+}
+
+.dark-calendar .react-datepicker__navigation:hover .react-datepicker__navigation-icon::before {
+  border-color: #fff !important;
+}
+
+/* Day names (Su Mo Tu...) */
+.dark-calendar .react-datepicker__day-name {
+  color: #555 !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.05em !important;
+}
+
+/* Day numbers */
+.dark-calendar .react-datepicker__day {
+  color: #fff !important;
+  border-radius: 6px !important;
+  transition: background 0.15s !important;
+}
+
+.dark-calendar .react-datepicker__day:hover {
+  background: #059669 !important;
+  color: #fff !important;
+}
+
+/* Selected day */
+.dark-calendar .react-datepicker__day--selected {
+  background: #059669 !important;
+  color: #fff !important;
+  font-weight: 600 !important;
+}
+
+/* Today */
+.dark-calendar .react-datepicker__day--today {
+  border: 1px solid #059669 !important;
+  background: transparent !important;
+  color: #059669 !important;
+  font-weight: 600 !important;
+}
+
+.dark-calendar .react-datepicker__day--today:hover {
+  background: #059669 !important;
+  color: #fff !important;
+}
+
+/* Disabled/blocked days */
+.dark-calendar .react-datepicker__day--disabled {
+  color: #333 !important;
+  text-decoration: line-through !important;
+}
+
+.dark-calendar .react-datepicker__day--disabled:hover {
+  background: transparent !important;
+  color: #333 !important;
+}
+
+/* Outside month days */
+.dark-calendar .react-datepicker__day--outside-month {
+  color: #333 !important;
+}
+
+/* Triangle/arrow pointer */
+.dark-calendar .react-datepicker__triangle {
+  display: none !important;
+}
+
+/* ── Date Range Highlight ── */
+.dark-calendar .react-datepicker__day--in-range {
+  background: rgba(5, 150, 105, 0.2) !important;
+  color: #fff !important;
+  border-radius: 0 !important;
+}
+
+.dark-calendar .react-datepicker__day--range-start {
+  background: #059669 !important;
+  color: #fff !important;
+  border-radius: 6px 0 0 6px !important;
+}
+
+.dark-calendar .react-datepicker__day--range-end {
+  background: #059669 !important;
+  color: #fff !important;
+  border-radius: 0 6px 6px 0 !important;
+}
+
+.dark-calendar .react-datepicker__day--in-selecting-range {
+  background: rgba(5, 150, 105, 0.15) !important;
+  color: #fff !important;
+  border-radius: 0 !important;
+}
+
+
+
 
 /* ── Results ── */
 .results-section {
@@ -505,12 +666,24 @@
 @media (max-width: 768px) {
   .home { overflow-x: hidden; }
   body { overflow-x: hidden; }
-  .hero { padding: 40px 24px 48px; min-height: auto; overflow: hidden; }
+  .hero { 
+    padding: 40px 24px 48px; 
+    min-height: auto; 
+    overflow: hidden;
+  }
+  .search-card { 
+    flex-direction: column; 
+    align-items: stretch;
+    width: calc(100% + 0px);
+    max-width: 100%;
+    box-sizing: border-box;
+    margin-top: 32px;
+    border-radius: 16px;
+  }
+  .search-divider { width: 100%; height: 1px; }
+  .hero-bg-text { display: none !important; }
   .results-section { padding: 48px 24px; }
   .features-section { padding: 60px 24px; }
   .cta-section { padding: 0 24px 60px; }
   .cta-inner { padding: 36px 24px; }
-  .search-card { flex-direction: column; align-items: stretch; }
-  .search-divider { width: 100%; height: 1px; }
-  .hero-bg-text { display: none !important; }
 }

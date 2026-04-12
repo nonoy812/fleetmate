@@ -1,7 +1,10 @@
+import DatePicker from 'react-datepicker'
+import 'react-datepicker/dist/react-datepicker.css'
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { supabase } from '../../supabaseClient'
 import './VehicleDetail.css'
+
 
 
 function VehicleDetail() {
@@ -11,6 +14,8 @@ function VehicleDetail() {
   const navigate = useNavigate()
   const [vehicle, setVehicle] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [bookingError, setBookingError] = useState('')
+  
   const [formData, setFormData] = useState({
     customer_name: '',
     customer_email: '',
@@ -19,11 +24,16 @@ function VehicleDetail() {
     return_date: passedDates.returnDate || '',
     with_driver: false,
     notes: ''
+    
   })
   const [submitting, setSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const [blockedRanges, setBlockedRanges] = useState([])
-  const today = new Date().toISOString().split('T')[0]
+
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+
+  
 
   useEffect(() => {
     async function fetchVehicle() {
@@ -40,14 +50,14 @@ function VehicleDetail() {
       }
       setLoading(false)
 
-      const { data: confirmedBookings } = await supabase
+      const { data: approvedBookings } = await supabase
         .from('bookings')
         .select('pickup_date, return_date')
         .eq('vehicle_id', id)
-        .eq('status', 'confirmed')
+        .eq('status', 'approved')
 
-      if (confirmedBookings) {
-        setBlockedRanges(confirmedBookings.map(b => {
+      if (approvedBookings) {
+        setBlockedRanges(approvedBookings.map(b => {
           const [sy, sm, sd] = b.pickup_date.split('-').map(Number)
           const [ey, em, ed] = b.return_date.split('-').map(Number)
           return {
@@ -69,6 +79,15 @@ function VehicleDetail() {
     }))
   }
 
+  function isDateBlocked(date) {
+    const d = new Date(date.getFullYear(), date.getMonth(), date.getDate())
+    return blockedRanges.some(range => {
+      const start = new Date(range.start.getFullYear(), range.start.getMonth(), range.start.getDate())
+      const end = new Date(range.end.getFullYear(), range.end.getMonth(), range.end.getDate())
+      return d >= start && d <= end
+    })
+  }
+
   function calculateTotal() {
     if (!formData.pickup_date || !formData.return_date) return 0
     const days = Math.ceil(
@@ -83,27 +102,47 @@ function VehicleDetail() {
   async function handleSubmit(e) {
     e.preventDefault()
 
-    if (formData.pickup_date < today) {
-      alert('Pickup date cannot be in the past.')
-      return
-    }
-    if (formData.return_date < formData.pickup_date) {
-      alert('Return date must be after pickup date.')
-      return
-    }
+    // Final check against database before submitting
+    const { data: freshBookings } = await supabase
+      .from('bookings')
+      .select('pickup_date, return_date')
+      .eq('vehicle_id', vehicle.id)
+      .eq('status', 'approved')
 
-    const pickup = new Date(formData.pickup_date)
-    const returnD = new Date(formData.return_date)
-
-    const conflict = blockedRanges.some(range => {
-      return pickup <= range.end && returnD >= range.start
-    })
+    if (freshBookings) {
+      const conflict = freshBookings.some(b => {
+        const [sy, sm, sd] = b.pickup_date.split('-').map(Number)
+        const [ey, em, ed] = b.return_date.split('-').map(Number)
+        const bStart = new Date(sy, sm - 1, sd)
+        const bEnd = new Date(ey, em - 1, ed)
+        const pickup = new Date(formData.pickup_date + 'T00:00:00')
+        const returnD = new Date(formData.return_date + 'T00:00:00')
+        return pickup <= bEnd && returnD >= bStart
+      })
 
     if (conflict) {
-      alert('These dates overlap with an already confirmed booking. Please choose different dates.')
+      setBookingError('These dates are already reserved. Please choose different dates.')
+      // re-fetch fresh blocked ranges so calendar updates
+      const { data: refreshed } = await supabase
+        .from('bookings')
+        .select('pickup_date, return_date')
+        .eq('vehicle_id', vehicle.id)
+        .eq('status', 'approved')
+
+      if (refreshed) {
+        setBlockedRanges(refreshed.map(b => {
+          const [sy, sm, sd] = b.pickup_date.split('-').map(Number)
+          const [ey, em, ed] = b.return_date.split('-').map(Number)
+          return {
+            start: new Date(sy, sm - 1, sd),
+            end: new Date(ey, em - 1, ed)
+          }
+        }))
+      }
+      setFormData(prev => ({ ...prev, pickup_date: '', return_date: '' }))
       return
     }
-
+    }
     setSubmitting(true)
 
     const total = calculateTotal()
@@ -144,6 +183,12 @@ function VehicleDetail() {
     )
   }
 
+  const pickupDateObj = formData.pickup_date ? new Date(formData.pickup_date + 'T00:00:00') : null
+  const returnDateObj = formData.return_date ? new Date(formData.return_date + 'T00:00:00') : null
+  const minReturnDate = pickupDateObj
+    ? new Date(pickupDateObj.getTime() + 86400000)
+    : today
+
   return (
     <div className="vehicle-detail">
       <div className="detail-inner">
@@ -182,12 +227,63 @@ function VehicleDetail() {
               <label>Phone Number</label>
               <input type="tel" name="customer_phone" value={formData.customer_phone} onChange={handleChange} maxLength={11} pattern="\d{11}" required />
 
-              <label>Pickup Date</label>
-              <input type="date" name="pickup_date" value={formData.pickup_date} onChange={handleChange} min={today} required />
-
-              <label>Return Date</label>
-              <input type="date" name="return_date" value={formData.return_date} onChange={handleChange} min={formData.pickup_date || today} required />
-
+              <div className="date-row">
+                <div className="date-field">
+                  <label>Pickup Date</label>
+                  <DatePicker
+                    selected={pickupDateObj}
+                    onChange={date => {
+                      if (!date) return
+                      setBookingError('')
+                      setFormData(prev => ({
+                        ...prev,
+                        pickup_date: date.toLocaleDateString('en-CA'),
+                        return_date: ''
+                      }))
+                    }}
+                    onFocus={e => e.target.blur()}
+                    selectsStart
+                    startDate={pickupDateObj}
+                    endDate={returnDateObj}
+                    minDate={today}
+                    filterDate={date => !isDateBlocked(date)}
+                    dateFormat="yyyy-MM-dd"
+                    placeholderText="Select pickup date"
+                    className="date-input"
+                    calendarClassName="detail-calendar"
+                    dayClassName={date => isDateBlocked(date) ? 'blocked-date' : undefined}
+                    autoComplete="off"
+                    required
+                  />
+                </div>
+                <div className="date-field">
+                  <label>Return Date</label>
+                  <DatePicker
+                    selected={returnDateObj}
+                    onChange={date => {
+                      if (!date) return
+                      setBookingError('')
+                      setFormData(prev => ({
+                        ...prev,
+                        return_date: date.toLocaleDateString('en-CA')
+                      }))
+                    }}
+                    onFocus={e => e.target.blur()}
+                    selectsEnd
+                    startDate={pickupDateObj}
+                    endDate={returnDateObj}
+                    minDate={minReturnDate}
+                    filterDate={date => !isDateBlocked(date)}
+                    dateFormat="yyyy-MM-dd"
+                    placeholderText="Select return date"
+                    className="date-input"
+                    calendarClassName="detail-calendar"
+                    dayClassName={date => isDateBlocked(date) ? 'blocked-date' : undefined}
+                    autoComplete="off"
+                    required
+                  />
+                </div>
+              </div>
               {vehicle.has_driver && (
                 <div className="driver-checkbox">
                   <input type="checkbox" name="with_driver" checked={formData.with_driver} onChange={handleChange} />
@@ -204,7 +300,9 @@ function VehicleDetail() {
                   <span>₱{calculateTotal().toLocaleString()}</span>
                 </div>
               )}
-
+              {bookingError && (
+                <p className="booking-error">{bookingError}</p>
+              )}
               <button type="submit" className="submit-btn" disabled={submitting}>
                 {submitting ? 'Submitting...' : 'Submit Booking Request'}
               </button>

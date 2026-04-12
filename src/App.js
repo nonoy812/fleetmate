@@ -7,6 +7,7 @@ import Dashboard from './pages/Admin/Dashboard'
 import Login from './pages/Admin/Login'
 import ProtectedRoute from './components/ProtectedRoute'
 import ChatWidget from './components/ChatWidget'
+import ScrollToTop from './components/ScrollToTop'
 
 function CustomerLayout({ children }) {
   return (
@@ -21,6 +22,7 @@ function CustomerLayout({ children }) {
 function App() {
   return (
     <BrowserRouter>
+    <ScrollToTop />
       <Routes>
         <Route path="/" element={<CustomerLayout><Home /></CustomerLayout>} />
         <Route path="/vehicles" element={<CustomerLayout><Vehicles /></CustomerLayout>} />
