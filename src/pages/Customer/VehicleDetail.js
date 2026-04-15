@@ -5,8 +5,6 @@ import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { supabase } from '../../supabaseClient'
 import './VehicleDetail.css'
 
-
-
 function VehicleDetail() {
   const location = useLocation()
   const passedDates = location.state || {}
@@ -15,7 +13,7 @@ function VehicleDetail() {
   const [vehicle, setVehicle] = useState(null)
   const [loading, setLoading] = useState(true)
   const [bookingError, setBookingError] = useState('')
-  
+
   const [formData, setFormData] = useState({
     customer_name: '',
     customer_email: '',
@@ -24,7 +22,6 @@ function VehicleDetail() {
     return_date: passedDates.returnDate || '',
     with_driver: false,
     notes: ''
-    
   })
   const [submitting, setSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
@@ -32,8 +29,6 @@ function VehicleDetail() {
 
   const today = new Date()
   today.setHours(0, 0, 0, 0)
-
-  
 
   useEffect(() => {
     async function fetchVehicle() {
@@ -88,6 +83,13 @@ function VehicleDetail() {
     })
   }
 
+  function getDayClassName(date) {
+    const d = new Date(date.getFullYear(), date.getMonth(), date.getDate())
+    if (d < today) return 'past-date'
+    if (isDateBlocked(date)) return 'blocked-date'
+    return undefined
+  }
+
   function calculateTotal() {
     if (!formData.pickup_date || !formData.return_date) return 0
     const days = Math.ceil(
@@ -102,7 +104,6 @@ function VehicleDetail() {
   async function handleSubmit(e) {
     e.preventDefault()
 
-    // Final check against database before submitting
     const { data: freshBookings } = await supabase
       .from('bookings')
       .select('pickup_date, return_date')
@@ -120,29 +121,29 @@ function VehicleDetail() {
         return pickup <= bEnd && returnD >= bStart
       })
 
-    if (conflict) {
-      setBookingError('These dates are already reserved. Please choose different dates.')
-      // re-fetch fresh blocked ranges so calendar updates
-      const { data: refreshed } = await supabase
-        .from('bookings')
-        .select('pickup_date, return_date')
-        .eq('vehicle_id', vehicle.id)
-        .eq('status', 'approved')
+      if (conflict) {
+        setBookingError('These dates are already reserved. Please choose different dates.')
+        const { data: refreshed } = await supabase
+          .from('bookings')
+          .select('pickup_date, return_date')
+          .eq('vehicle_id', vehicle.id)
+          .eq('status', 'approved')
 
-      if (refreshed) {
-        setBlockedRanges(refreshed.map(b => {
-          const [sy, sm, sd] = b.pickup_date.split('-').map(Number)
-          const [ey, em, ed] = b.return_date.split('-').map(Number)
-          return {
-            start: new Date(sy, sm - 1, sd),
-            end: new Date(ey, em - 1, ed)
-          }
-        }))
+        if (refreshed) {
+          setBlockedRanges(refreshed.map(b => {
+            const [sy, sm, sd] = b.pickup_date.split('-').map(Number)
+            const [ey, em, ed] = b.return_date.split('-').map(Number)
+            return {
+              start: new Date(sy, sm - 1, sd),
+              end: new Date(ey, em - 1, ed)
+            }
+          }))
+        }
+        setFormData(prev => ({ ...prev, pickup_date: '', return_date: '' }))
+        return
       }
-      setFormData(prev => ({ ...prev, pickup_date: '', return_date: '' }))
-      return
     }
-    }
+
     setSubmitting(true)
 
     const total = calculateTotal()
@@ -251,7 +252,7 @@ function VehicleDetail() {
                     placeholderText="Select pickup date"
                     className="date-input"
                     calendarClassName="detail-calendar"
-                    dayClassName={date => isDateBlocked(date) ? 'blocked-date' : undefined}
+                    dayClassName={getDayClassName}
                     autoComplete="off"
                     required
                   />
@@ -278,12 +279,13 @@ function VehicleDetail() {
                     placeholderText="Select return date"
                     className="date-input"
                     calendarClassName="detail-calendar"
-                    dayClassName={date => isDateBlocked(date) ? 'blocked-date' : undefined}
+                    dayClassName={getDayClassName}
                     autoComplete="off"
                     required
                   />
                 </div>
               </div>
+
               {vehicle.has_driver && (
                 <div className="driver-checkbox">
                   <input type="checkbox" name="with_driver" checked={formData.with_driver} onChange={handleChange} />
@@ -300,9 +302,11 @@ function VehicleDetail() {
                   <span>₱{calculateTotal().toLocaleString()}</span>
                 </div>
               )}
+
               {bookingError && (
                 <p className="booking-error">{bookingError}</p>
               )}
+
               <button type="submit" className="submit-btn" disabled={submitting}>
                 {submitting ? 'Submitting...' : 'Submit Booking Request'}
               </button>

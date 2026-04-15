@@ -6,10 +6,19 @@ import './Vehicles.css'
 function Vehicles() {
   const [vehicles, setVehicles] = useState([])
   const [loading, setLoading] = useState(true)
+  const [search, setSearch] = useState('')
+  const [seatsFilter, setSeatsFilter] = useState('')
 
   useEffect(() => {
     fetchVehicles()
   }, [])
+
+  const filteredVehicles = vehicles.filter(v => {
+    const matchesSearch = v.name.toLowerCase().includes(search.toLowerCase()) ||
+      v.type?.toLowerCase().includes(search.toLowerCase())
+    const matchesSeats = !seatsFilter || v.seats >= parseInt(seatsFilter)
+    return matchesSearch && matchesSeats
+  })
 
   async function fetchVehicles() {
     const { data, error } = await supabase
@@ -33,18 +42,41 @@ function Vehicles() {
 
   return (
     <div className="vehicles-page">
-
       <div className="vehicles-header">
         <div className="vehicles-tag">Our Fleet</div>
         <h1 className="vehicles-title">Find Your <span className="vehicles-title-accent">Perfect Ride</span></h1>
         <p className="vehicles-sub">Browse our available fleet — with or without driver.</p>
       </div>
-
+      <div className="vehicles-filters">
+        <div className="vehicles-search-bar">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#aaa" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+          <input
+            type="text"
+            placeholder="Search vehicles..."
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            className="vehicles-search-input"
+          />
+        </div>
+        <select
+          value={seatsFilter}
+          onChange={e => setSeatsFilter(e.target.value)}
+          className="vehicles-seats-filter"
+        >
+          <option value="">All</option>
+          <option value="2">2+ seats</option>
+          <option value="4">4+ seats</option>
+          <option value="6">6+ seats</option>
+          <option value="8">8+ seats</option>
+        </select>
+      </div>
       {vehicles.length === 0 ? (
         <p className="no-vehicles">No vehicles available at the moment.</p>
       ) : (
         <div className="vehicle-grid">
-          {vehicles.map((vehicle) => (
+          {filteredVehicles.map((vehicle) => (
             <div key={vehicle.id} className="vehicle-card">
             <div className="vehicle-img-wrap">
               {vehicle.image_url
