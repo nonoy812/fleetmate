@@ -165,6 +165,14 @@ function VehicleDetail() {
       alert('Something went wrong. Please try again.')
     } else {
       setSubmitted(true)
+      await supabase.functions.invoke("clever-handler", {
+        body: {
+          customer_name: formData.customer_name,
+          vehicle_name: vehicle.name,
+          pickup_date: formData.pickup_date,
+          return_date: formData.return_date,
+        },
+      });
     }
     setSubmitting(false)
   }
