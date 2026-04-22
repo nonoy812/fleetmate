@@ -1,7 +1,9 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../../supabaseClient'
 import './Home.css'
+import DatePicker from 'react-datepicker'
+import 'react-datepicker/dist/react-datepicker.css'
 
 function Home() {
   const [pickupDate, setPickupDate] = useState('')
@@ -11,6 +13,14 @@ function Home() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [searched, setSearched] = useState(false)
+  const resultsRef = useRef(null)
+
+  useEffect(() => {
+    if (results && resultsRef.current) {
+      const top = resultsRef.current.getBoundingClientRect().top + window.scrollY - 80
+      window.scrollTo({ top, behavior: 'smooth' })
+    }
+  }, [results])
 
   const handleSearch = async () => {
     if (!pickupDate || !returnDate) {
@@ -36,6 +46,7 @@ function Home() {
 
     const { data: vehicles, error: vehicleError } = await vehicleQuery
 
+
     if (vehicleError) {
       setError('Something went wrong. Please try again.')
       setLoading(false)
@@ -48,7 +59,7 @@ function Home() {
       .from('bookings')
       .select('vehicle_id')
       .in('vehicle_id', vehicleIds)
-      .not('status','in', '("cancelled","rejected")')
+      .eq('status' ,'approved')
       .lte('pickup_date', returnDate)
       .gte('return_date', pickupDate)
 
@@ -91,21 +102,44 @@ function Home() {
           <div className="search-fields">
             <div className="search-field">
               <label>Pickup Date</label>
-              <input
-                type="date"
-                min={today}
-                value={pickupDate}
-                onChange={e => setPickupDate(e.target.value)}
+              <DatePicker
+                selected={pickupDate ? new Date(pickupDate + 'T00:00:00') : null}
+                onChange={date => {
+                  if (!date) return
+                  setPickupDate(date.toLocaleDateString('en-CA'))
+                  setReturnDate('')
+                }}
+                onFocus={e => e.target.blur()}
+                minDate={new Date()}
+                selectsStart
+                startDate={pickupDate ? new Date(pickupDate + 'T00:00:00') : null}
+                endDate={returnDate ? new Date(returnDate + 'T00:00:00') : null}
+                dateFormat="yyyy-MM-dd"
+                placeholderText="Select pickup date"
+                className="home-date-input"
+                calendarClassName="dark-calendar"
+                autoComplete="off"
               />
             </div>
             <div className="search-divider" />
             <div className="search-field">
               <label>Return Date</label>
-              <input
-                type="date"
-                min={pickupDate || today}
-                value={returnDate}
-                onChange={e => setReturnDate(e.target.value)}
+              <DatePicker
+                selected={returnDate ? new Date(returnDate + 'T00:00:00') : null}
+                onChange={date => {
+                  if (!date) return
+                  setReturnDate(date.toLocaleDateString('en-CA'))
+                }}
+                onFocus={e => e.target.blur()}
+                minDate={pickupDate ? new Date(new Date(pickupDate + 'T00:00:00').getTime() + 86400000) : new Date()}
+                selectsEnd
+                startDate={pickupDate ? new Date(pickupDate + 'T00:00:00') : null}
+                endDate={returnDate ? new Date(returnDate + 'T00:00:00') : null}
+                dateFormat="yyyy-MM-dd"
+                placeholderText="Select return date"
+                className="home-date-input"
+                calendarClassName="dark-calendar"
+                autoComplete="off"
               />
             </div>
             <div className="search-divider" />
@@ -128,7 +162,7 @@ function Home() {
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
                 </svg>
-                Search
+                Search Vehicles
               </span>
             )}
           </button>
@@ -138,7 +172,7 @@ function Home() {
 
       {/* Results */}
       {searched && (
-        <section className="results-section">
+        <section className="results-section" ref={resultsRef}>
           <div className="results-header">
             <h2 className="results-title">
               {loading

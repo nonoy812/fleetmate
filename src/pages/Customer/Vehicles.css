@@ -6,9 +6,71 @@
   background: #0a0a0a;
   color: #fff;
   min-height: 100vh;
-  padding: 60px 60px 80px;
+  padding: 10px 60px 80px;
   overflow-x: hidden;
 }
+/* ── Search Filter ── */
+.vehicles-filters {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+}
+
+.vehicles-seats-filter {
+  appearance: none;
+  -webkit-appearance: none;
+  background: #111;
+  border: 1px solid #1e1e1e;
+  border-radius: 10px;
+  padding: 12px 36px 12px 18px;
+  color: #fff;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.2s;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23059669' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-color: #111;
+  align-self: stretch;
+}
+
+.vehicles-seats-filter:focus { border-color: #059669; }
+
+.vehicles-seats-filter option { background: #111; color: #fff; }
+
+/* ── Search Bar ── */
+.vehicles-search-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #111;
+  border: 1px solid #1e1e1e;
+  border-radius: 10px;
+  padding: 12px 18px;
+  flex: 1;
+  max-width: 400px;
+  transition: border-color 0.2s;
+}
+
+.vehicles-search-bar:focus-within {
+  border-color: #059669;
+}
+
+.vehicles-search-input {
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #fff;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  width: 100%;
+}
+
+.vehicles-search-input::placeholder { color: #444; }
 
 /* ── Loading ── */
 .vehicles-loading {
@@ -25,7 +87,7 @@
 /* ── Header ── */
 .vehicles-header {
   max-width: 600px;
-  margin-bottom: 52px;
+  margin-bottom: 15px;
   animation: fadeUp 0.7s ease both;
   display: flex;
   flex-direction: column;
@@ -42,7 +104,7 @@
   border: 1px solid rgba(5,150,105,0.4);
   padding: 5px 14px;
   border-radius: 100px;
-  margin-bottom: 16px;
+  margin-bottom: 8px;
 }
 
 .vehicles-title {
@@ -53,6 +115,8 @@
   letter-spacing: -1.5px;
   color: #ffffff;
   margin-bottom: 12px;
+  
+
 }
 
 .vehicles-title-accent {
@@ -63,7 +127,7 @@
   font-size: 15px;
   color: #666;
   font-weight: 300;
-  line-height: 1.6;
+  line-height: 1;
 }
 
 .no-vehicles {
