@@ -5,6 +5,20 @@ import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { supabase } from '../../supabaseClient'
 import './VehicleDetail.css'
 
+function toE164PH(input) {
+  let digits = input.replace(/\D/g, '');
+  if (digits.startsWith('63')) {
+    digits = digits.slice(2);
+  }
+  if (digits.startsWith('0')) {
+    digits = digits.slice(1);
+  }
+  if (digits.length !== 10) {
+    throw new Error(`Invalid phone number: ${input}`);
+  }
+  return `+63${digits}`;
+}
+
 function VehicleDetail() {
   const location = useLocation()
   const passedDates = location.state || {}
@@ -104,55 +118,63 @@ function VehicleDetail() {
   async function handleSubmit(e) {
     e.preventDefault()
 
-    const { data: freshBookings } = await supabase
-      .from('bookings')
-      .select('pickup_date, return_date')
-      .eq('vehicle_id', vehicle.id)
-      .eq('status', 'approved')
+    let formattedPhone
 
-    if (freshBookings) {
-      const conflict = freshBookings.some(b => {
-        const [sy, sm, sd] = b.pickup_date.split('-').map(Number)
-        const [ey, em, ed] = b.return_date.split('-').map(Number)
-        const bStart = new Date(sy, sm - 1, sd)
-        const bEnd = new Date(ey, em - 1, ed)
-        const pickup = new Date(formData.pickup_date + 'T00:00:00')
-        const returnD = new Date(formData.return_date + 'T00:00:00')
-        return pickup <= bEnd && returnD >= bStart
-      })
+    try {
+      formattedPhone = toE164PH(formData.customer_phone)
 
-      if (conflict) {
-        setBookingError('These dates are already reserved. Please choose different dates.')
-        const { data: refreshed } = await supabase
-          .from('bookings')
-          .select('pickup_date, return_date')
-          .eq('vehicle_id', vehicle.id)
-          .eq('status', 'approved')
+      const { data: freshBookings } = await supabase
+        .from('bookings')
+        .select('pickup_date, return_date')
+        .eq('vehicle_id', vehicle.id)
+        .eq('status', 'approved')
 
-        if (refreshed) {
-          setBlockedRanges(refreshed.map(b => {
-            const [sy, sm, sd] = b.pickup_date.split('-').map(Number)
-            const [ey, em, ed] = b.return_date.split('-').map(Number)
-            return {
-              start: new Date(sy, sm - 1, sd),
-              end: new Date(ey, em - 1, ed)
-            }
-          }))
+      if (freshBookings && freshBookings.length > 0) {
+        const conflict = freshBookings.some(b => {
+          const [sy, sm, sd] = b.pickup_date.split('-').map(Number)
+          const [ey, em, ed] = b.return_date.split('-').map(Number)
+          const bStart = new Date(sy, sm - 1, sd)
+          const bEnd = new Date(ey, em - 1, ed)
+          const pickup = new Date(formData.pickup_date + 'T00:00:00')
+          const returnD = new Date(formData.return_date + 'T00:00:00')
+          return pickup <= bEnd && returnD >= bStart
+        })
+
+        if (conflict) {
+          setBookingError('These dates are already reserved. Please choose different dates.')
+          const { data: refreshed } = await supabase
+            .from('bookings')
+            .select('pickup_date, return_date')
+            .eq('vehicle_id', vehicle.id)
+            .eq('status', 'approved')
+
+          if (refreshed) {
+            setBlockedRanges(refreshed.map(b => {
+              const [sy, sm, sd] = b.pickup_date.split('-').map(Number)
+              const [ey, em, ed] = b.return_date.split('-').map(Number)
+              return {
+                start: new Date(sy, sm - 1, sd),
+                end: new Date(ey, em - 1, ed)
+              }
+            }))
+          }
+          setFormData(prev => ({ ...prev, pickup_date: '', return_date: '' }))
+          return
         }
-        setFormData(prev => ({ ...prev, pickup_date: '', return_date: '' }))
-        return
       }
+    } catch (err) {
+      alert(err.message)
+      return
     }
 
     setSubmitting(true)
-
     const total = calculateTotal()
 
     const { error } = await supabase.from('bookings').insert({
       vehicle_id: vehicle.id,
       customer_name: formData.customer_name,
       customer_email: formData.customer_email,
-      customer_phone: formData.customer_phone,
+      customer_phone: formattedPhone,
       pickup_date: formData.pickup_date,
       return_date: formData.return_date,
       with_driver: formData.with_driver,
@@ -169,11 +191,13 @@ function VehicleDetail() {
       await supabase.functions.invoke("clever-handler", {
         body: {
           customer_name: formData.customer_name,
+          customer_phone: formattedPhone,
+          customer_email: formData.customer_email,
           vehicle_name: vehicle.name,
           pickup_date: formData.pickup_date,
           return_date: formData.return_date,
         },
-      });
+      })
     }
     setSubmitting(false)
   }
@@ -234,7 +258,7 @@ function VehicleDetail() {
               <input type="email" name="customer_email" value={formData.customer_email} onChange={handleChange} required />
 
               <label>Phone Number</label>
-              <input type="tel" name="customer_phone" value={formData.customer_phone} onChange={handleChange} maxLength={11} pattern="\d{11}" required />
+              <input type="tel" name="customer_phone" value={formData.customer_phone} onChange={handleChange} maxLength={13} required />
 
               <div className="date-row">
                 <div className="date-field">
