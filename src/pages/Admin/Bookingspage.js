@@ -4,6 +4,7 @@ import { supabase } from '../../supabaseClient'
 import VehicleCalendar from './Vehiclecalendar'
 import './Bookingspage.css'
 
+
 function BookingsPage({ onStatusChange }) {
   const [bookings, setBookings] = useState([])
   const [loading, setLoading] = useState(true)
@@ -11,6 +12,10 @@ function BookingsPage({ onStatusChange }) {
   const [search, setSearch] = useState('')
   const [selectedBooking, setSelectedBooking] = useState(null)
   const [confirming, setConfirming] = useState(null)
+  const [switchFlow, setSwitchFlow] = useState(false)
+  const [availableVehicles, setAvailableVehicles] = useState([])
+  const [selectedSwitchVehicle, setSelectedSwitchVehicle] = useState('')
+  const [switchLoading, setSwitchLoading] = useState(false)
 
   // Cancellation state
   const [cancelFlow, setCancelFlow] = useState(false)
@@ -118,6 +123,56 @@ function BookingsPage({ onStatusChange }) {
     setCancelError('')
   }
 
+  async function openSwitchFlow() {
+    setSwitchLoading(true)
+    setSwitchFlow(true)
+    setSelectedSwitchVehicle('')
+
+    // Fetch vehicles available for booking dates
+    const { data: allVehicles } = await supabase
+      .from('vehicles')
+      .select('*')
+      .eq('status', 'available')
+      .neq('id', selectedBooking.vehicle_id)
+      .neq('status', 'archived')
+
+    if (!allVehicles) { setSwitchLoading(false); return }
+
+    const vehicleIds = allVehicles.map(v => v.id)
+
+    const { data: overlapping } = await supabase
+    .from('bookings')
+    .select('vehicle_id')
+    .in('vehicle_id', vehicleIds)
+    .in('status', ['approved', 'pending'])
+    .lte('pickup_date', selectedBooking.return_date)
+    .gte('return_date', selectedBooking.pickup_date)
+
+    const bookedIds = new Set(overlapping?.map(b => b.vehicle_id) || [])
+    const available = allVehicles.filter(v => !bookedIds.has(v.id))
+
+    setAvailableVehicles(available)
+    setSwitchLoading(false)
+  }
+
+  async function handleVehicleSwitch() {
+    if (!selectedSwitchVehicle) return
+
+    const { error } = await supabase
+      .from('bookings')
+      .update({ vehicle_id: selectedSwitchVehicle })
+      .eq('id', selectedBooking.id)
+
+    if (error) {
+      alert('Error switching vehicle')
+    } else {
+      setSwitchFlow(false)
+      setSelectedSwitchVehicle('')
+      setSelectedBooking(null)
+      fetchBookings()
+    }
+  }
+
   function closeModal() {
     setSelectedBooking(null)
     setConfirming(null)
@@ -125,6 +180,8 @@ function BookingsPage({ onStatusChange }) {
     setCancelledBy('')
     setCancellationReason('')
     setCancelError('')
+    setSwitchFlow(false)        // ← add this
+    setSelectedSwitchVehicle('')
   }
 
   function formatDate(date) {
@@ -385,10 +442,52 @@ function BookingsPage({ onStatusChange }) {
               )}
 
               {/* Approved actions */}
-              {selectedBooking.status === 'approved' && !cancelFlow && (
-                <button className="action-cancel" onClick={openCancelFlow}>
-                  Cancel Booking
-                </button>
+              {selectedBooking.status === 'approved' && !cancelFlow && !switchFlow && (
+                <>
+                  <button className="action-switch" onClick={openSwitchFlow}>
+                    🔄 Switch Vehicle
+                  </button>
+                  <button className="action-cancel" onClick={openCancelFlow}>
+                    Cancel Booking
+                  </button>
+                </>
+              )}
+
+              {switchFlow && (
+                <div className="switch-flow">
+                  <p className="cancel-flow-title" style={{ color: '#059669' }}>Switch Vehicle</p>
+                  <p className="cancel-flow-label">Select replacement vehicle</p>
+                  {switchLoading ? (
+                    <p style={{ color: '#888', fontSize: '13px' }}>Checking availability...</p>
+                  ) : availableVehicles.length === 0 ? (
+                    <p style={{ color: '#ef4444', fontSize: '13px' }}>No available vehicles for these dates.</p>
+                  ) : (
+                    <select
+                      className="cancel-reason-input"
+                      value={selectedSwitchVehicle}
+                      onChange={e => setSelectedSwitchVehicle(e.target.value)}
+                    >
+                      <option value="">Select a vehicle...</option>
+                      {availableVehicles.map(v => (
+                        <option key={v.id} value={v.id}>
+                          {v.name} — ₱{Number(v.price_per_day).toLocaleString()}/day · {v.seats} seats
+                        </option>
+                      ))}
+                    </select>
+                  )}
+                  <div className="cancel-flow-btns">
+                    <button
+                      className="confirm-yes-approve"
+                      onClick={handleVehicleSwitch}
+                      disabled={!selectedSwitchVehicle}
+                    >
+                      Confirm Switch
+                    </button>
+                    <button className="confirm-no" onClick={() => { setSwitchFlow(false); setSelectedSwitchVehicle('') }}>
+                      Go Back
+                    </button>
+                  </div>
+                </div>
               )}
 
               {/* Confirm approve/reject */}

@@ -265,6 +265,34 @@
 
 .detail-close-btn:hover { border-color: #ef4444; color: #ef4444; }
 
+/* Replace Car  */
+.action-switch {
+  flex: 1;
+  background: #f0fdf4;
+  color: #065f46;
+  border: 1px solid #d1fae5;
+  border-radius: 10px;
+  padding: 12px 20px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.action-switch:hover { background: #d1fae5; }
+
+.switch-flow {
+  width: 100%;
+  background: #f0fdf4;
+  border: 1px solid #d1fae5;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
 /* ── Archived Warning ── */
 .booking-archived-warning {
   background: #fef3cd;
