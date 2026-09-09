@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import Home from './pages/Customer/Home'
 import Vehicles from './pages/Customer/Vehicles'
@@ -8,6 +8,8 @@ import Login from './pages/Admin/Login'
 import ProtectedRoute from './components/ProtectedRoute'
 import ChatWidget from './components/ChatWidget'
 import ScrollToTop from './components/ScrollToTop'
+
+const isAdminSubdomain = window.location.hostname.startsWith('admin.')
 
 function CustomerLayout({ children }) {
   return (
@@ -22,9 +24,13 @@ function CustomerLayout({ children }) {
 function App() {
   return (
     <BrowserRouter>
-    <ScrollToTop />
+      <ScrollToTop />
       <Routes>
-        <Route path="/" element={<CustomerLayout><Home /></CustomerLayout>} />
+        <Route path="/" element={
+          isAdminSubdomain
+            ? <Navigate to="/login" replace />
+            : <CustomerLayout><Home /></CustomerLayout>
+        } />
         <Route path="/vehicles" element={<CustomerLayout><Vehicles /></CustomerLayout>} />
         <Route path="/vehicles/:id" element={<CustomerLayout><VehicleDetail /></CustomerLayout>} />
         <Route path="/login" element={<Login />} />
