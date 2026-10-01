@@ -53,15 +53,10 @@ function Home() {
       return
     }
 
-    const vehicleIds = vehicles.map(v => v.id)
-
-    const { data: overlappingBookings, error: bookingError } = await supabase
-      .from('bookings')
-      .select('vehicle_id')
-      .in('vehicle_id', vehicleIds)
-      .eq('status' ,'approved')
-      .lte('pickup_date', returnDate)
-      .gte('return_date', pickupDate)
+    // Booked dates come from a database function so customer
+    // details in the bookings table stay private
+    const { data: bookedRanges, error: bookingError } = await supabase
+      .rpc('get_booked_dates')
 
     if (bookingError) {
       setError('Something went wrong. Please try again.')
@@ -69,10 +64,14 @@ function Home() {
       return
     }
 
-    const bookedIds = new Set(overlappingBookings.map(b => b.vehicle_id))
+    const bookedIds = new Set(
+      (bookedRanges || [])
+        .filter(b => b.pickup_date <= returnDate && b.return_date >= pickupDate)
+        .map(b => b.vehicle_id)
+    )
     const tagged = vehicles.map(v => ({
       ...v,
-      isAvailable: !bookedIds.has(v.id),
+      isAvailable: !bookedIds.has(String(v.id)),
     }))
 
     tagged.sort((a, b) => b.isAvailable - a.isAvailable)

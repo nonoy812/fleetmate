@@ -67,10 +67,7 @@ function VehicleDetail() {
       setLoading(false)
 
       const { data: approvedBookings, error: bookingsError } = await supabase
-        .from('bookings')
-        .select('pickup_date, return_date')
-        .eq('vehicle_id', id)
-        .eq('status', 'approved')
+        .rpc('get_booked_dates', { p_vehicle_id: String(id) })
 
       if (bookingsError) {
         console.error('Error loading blocked dates:', bookingsError)
@@ -189,10 +186,7 @@ function VehicleDetail() {
       // -----------------------------------------------------
       const { data: freshBookings, error: bookingsError } =
         await supabase
-          .from('bookings')
-          .select('pickup_date, return_date')
-          .eq('vehicle_id', vehicle.id)
-          .eq('status', 'approved')
+          .rpc('get_booked_dates', { p_vehicle_id: String(vehicle.id) })
 
       if (bookingsError) {
         console.error('Error checking availability:', bookingsError)
