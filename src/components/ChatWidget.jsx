@@ -55,7 +55,17 @@ export default function ChatWidget() {
         headers: {
           Authorization: `Bearer ${process.env.REACT_APP_SUPABASE_ANON_KEY}`,
           'Content-Type': 'application/json'},
-        body: JSON.stringify({ message: text }),
+        body: JSON.stringify({
+          message: text,
+          // Earlier turns so the assistant remembers the conversation
+          // (skip the canned greeting and error messages)
+          history: messages
+            .filter((m) => m.id !== 1 && !m.isError)
+            .map((m) => ({
+              role: m.role === "bot" ? "assistant" : "user",
+              content: m.text,
+            })),
+        }),
       });
       const data = await response.json()
     setIsTyping(false);
@@ -74,6 +84,7 @@ export default function ChatWidget() {
         role: "bot",
         text: "Sorry, something went wrong. Please try again.",
         time: new Date(),
+        isError: true,
       };
       setMessages((prev) => [...prev, botMsg]);
     }
