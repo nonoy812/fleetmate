@@ -87,7 +87,7 @@ function Home() {
 
       {/* Hero */}
       <section className="hero">
-        <div className="hero-bg-text">FLEET</div>
+        <div className="hero-bg-text">JR4L</div>
         <div className="hero-content">
           <div className="hero-tag">Iloilo's Premier Car Rental</div>
           <h1 className="hero-title">
@@ -237,7 +237,7 @@ function Home() {
       {!searched && (
         <>
           <section className="features-section">
-            <div className="features-label">Why FleetMate</div>
+            <div className="features-label">Why JR4L</div>
             <div className="features-grid">
               <div className="feature-item">
                 <div className="feature-icon">

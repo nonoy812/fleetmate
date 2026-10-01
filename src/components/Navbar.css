@@ -19,6 +19,7 @@
   color: #ffffff;
   text-decoration: none;
   letter-spacing: -0.5px;
+  white-space: nowrap;
 }
 
 .navbar-logo span {
@@ -54,5 +55,6 @@
 
 @media (max-width: 768px) {
   .navbar { padding: 16px 24px; }
+  .navbar-logo { font-size: 18px; }
   .navbar-links a { padding: 6px 10px; font-size: 13px; }
 }

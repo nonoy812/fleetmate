@@ -7,7 +7,7 @@ function Footer() {
       <div className="footer-inner">
         <div className="footer-brand">
           <Link to="/" className="footer-logo">
-            Fleet<span>Mate</span>
+            JR4L <span>Car Rental</span>
           </Link>
           <p className="footer-tagline">
             Reliable vehicle rentals, booked in minutes.
@@ -30,7 +30,7 @@ function Footer() {
       </div>
 
       <div className="footer-bottom">
-        &copy; {new Date().getFullYear()} FleetMate. All rights reserved.
+        &copy; {new Date().getFullYear()} JR4L Car Rental. All rights reserved.
       </div>
     </footer>
   )

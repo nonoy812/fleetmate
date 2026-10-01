@@ -23,7 +23,7 @@ export default function ChatWidget() {
     {
       id: 1,
       role: "bot",
-      text: "Hi there! I'm your FleetMate assistant. How can I help you today?",
+      text: "Hi there! I'm your JR4L Car Rental assistant. How can I help you today?",
       time: new Date(),
     },
   ]);
@@ -102,7 +102,7 @@ export default function ChatWidget() {
               </svg>
             </div>
             <div>
-              <div style={s.headerTitle}>FleetMate Assistant</div>
+              <div style={s.headerTitle}>JR4L Assistant</div>
               <div style={s.headerSub}>Ask me anything about rentals</div>
             </div>
             <div style={s.onlineDot} />

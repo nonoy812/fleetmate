@@ -5,7 +5,7 @@ function Navbar() {
   return (
     <nav className="navbar">
       <NavLink to="/" className="navbar-logo">
-        Fleet<span>Mate</span>
+        JR4L <span>Car Rental</span>
       </NavLink>
       <div className="navbar-links">
         <NavLink to="/" className={({ isActive }) => isActive ? 'active' : ''} end>Home</NavLink>
