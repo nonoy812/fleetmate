@@ -49,6 +49,12 @@
   font-weight: 600;
 }
 
+.footer-col span {
+  font-size: 14px;
+  max-width: 260px;
+  line-height: 1.5;
+}
+
 .footer-col a {
   color: #888;
   text-decoration: none;
