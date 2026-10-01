@@ -17,6 +17,11 @@ function BookingsPage({ onStatusChange }) {
   const [selectedSwitchVehicle, setSelectedSwitchVehicle] = useState('')
   const [switchLoading, setSwitchLoading] = useState(false)
 
+  // Admin trip notes
+  const [adminNote, setAdminNote] = useState('')
+  const [noteSaving, setNoteSaving] = useState(false)
+  const [noteSaved, setNoteSaved] = useState(false)
+
   // Cancellation state
   const [cancelFlow, setCancelFlow] = useState(false)
   const [cancelledBy, setCancelledBy] = useState('')
@@ -26,6 +31,33 @@ function BookingsPage({ onStatusChange }) {
   useEffect(() => {
     fetchBookings()
   }, [filter])
+
+  useEffect(() => {
+    setAdminNote(selectedBooking?.admin_notes || '')
+    setNoteSaved(false)
+  }, [selectedBooking?.id]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  async function saveAdminNote() {
+    setNoteSaving(true)
+    const note = adminNote.trim()
+    const { error } = await supabase
+      .from('bookings')
+      .update({ admin_notes: note || null })
+      .eq('id', selectedBooking.id)
+    setNoteSaving(false)
+
+    if (error) {
+      alert('Error saving note')
+      return
+    }
+
+    const saved = note || null
+    setSelectedBooking(prev => ({ ...prev, admin_notes: saved }))
+    setBookings(prev => prev.map(b =>
+      b.id === selectedBooking.id ? { ...b, admin_notes: saved } : b
+    ))
+    setNoteSaved(true)
+  }
 
   async function fetchBookings() {
     setLoading(true)
@@ -314,6 +346,9 @@ function BookingsPage({ onStatusChange }) {
               <div className="booking-strip-right">
                 <span className="booking-strip-price">₱{booking.total_price?.toLocaleString()}</span>
                 <span className={`status-badge ${booking.status}`}>{booking.status}</span>
+                {booking.admin_notes && (
+                  <span className="booking-note-flag" title={booking.admin_notes}>📝 Note</span>
+                )}
                 <span className="booking-strip-date">{formatDateTime(booking.created_at)}</span>
               </div>
             </div>
@@ -392,6 +427,28 @@ function BookingsPage({ onStatusChange }) {
                   <span className="booking-detail-value">{selectedBooking.notes}</span>
                 </div>
               )}
+
+              {/* Admin trip notes — internal, never shown to customers */}
+              <div className="booking-detail-item booking-detail-item--full">
+                <span className="booking-detail-label">Admin Notes (internal)</span>
+                <textarea
+                  className="admin-note-input"
+                  rows={3}
+                  placeholder="e.g. fuel level, damage, driver, payment received..."
+                  value={adminNote}
+                  onChange={e => { setAdminNote(e.target.value); setNoteSaved(false) }}
+                />
+                <div className="admin-note-actions">
+                  <button
+                    className="admin-note-save"
+                    onClick={saveAdminNote}
+                    disabled={noteSaving || adminNote.trim() === (selectedBooking.admin_notes || '')}
+                  >
+                    {noteSaving ? 'Saving...' : 'Save Note'}
+                  </button>
+                  {noteSaved && <span className="admin-note-saved">Saved ✓</span>}
+                </div>
+              </div>
 
               {/* Cancellation Info — show if cancelled */}
               {selectedBooking.status === 'cancelled' && (
