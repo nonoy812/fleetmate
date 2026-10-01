@@ -36,6 +36,8 @@ function VehicleDetail() {
     customer_phone: '',
     pickup_date: passedDates.pickupDate || '',
     return_date: passedDates.returnDate || '',
+    pickup_time: '09:00',
+    return_time: '09:00',
     with_driver: false,
     notes: ''
   })
@@ -297,6 +299,8 @@ function VehicleDetail() {
           customer_phone: formattedPhone,
           pickup_date: formData.pickup_date,
           return_date: formData.return_date,
+          pickup_time: formData.pickup_time,
+          return_time: formData.return_time,
           with_driver: formData.with_driver,
           total_price: total,
           status: 'pending',
@@ -331,7 +335,9 @@ function VehicleDetail() {
               customer_email: formData.customer_email,
               vehicle_name: vehicle.name,
               pickup_date: formData.pickup_date,
-              return_date: formData.return_date
+              return_date: formData.return_date,
+              pickup_time: formData.pickup_time,
+              return_time: formData.return_time
             }
           }
         )
@@ -608,6 +614,45 @@ function VehicleDetail() {
                     required
                   />
 
+                </div>
+
+              </div>
+
+              {/* =================================================
+                  TIMES
+              ================================================== */}
+              <div className="date-row">
+
+                <div className="date-field">
+                  <label>Pickup Time</label>
+                  <input
+                    type="time"
+                    className="date-input"
+                    value={formData.pickup_time}
+                    onChange={e =>
+                      setFormData(prev => ({
+                        ...prev,
+                        pickup_time: e.target.value
+                      }))
+                    }
+                    required
+                  />
+                </div>
+
+                <div className="date-field">
+                  <label>Return Time</label>
+                  <input
+                    type="time"
+                    className="date-input"
+                    value={formData.return_time}
+                    onChange={e =>
+                      setFormData(prev => ({
+                        ...prev,
+                        return_time: e.target.value
+                      }))
+                    }
+                    required
+                  />
                 </div>
 
               </div>

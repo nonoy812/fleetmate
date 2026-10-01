@@ -299,12 +299,14 @@ function BookingsPage({ onStatusChange }) {
               <div className="booking-strip-field">
                 <span className="booking-strip-label">Pickup</span>
                 <span className="booking-strip-value booking-strip-dates">{formatDate(booking.pickup_date)}</span>
+                {booking.pickup_time && <span className="booking-strip-sub">{booking.pickup_time.slice(0, 5)}</span>}
               </div>
 
               {/* Return */}
               <div className="booking-strip-field">
                 <span className="booking-strip-label">Return</span>
                 <span className="booking-strip-value booking-strip-dates">{formatDate(booking.return_date)}</span>
+                {booking.return_time && <span className="booking-strip-sub">{booking.return_time.slice(0, 5)}</span>}
                 <span className="booking-strip-sub">{getDuration(booking.pickup_date, booking.return_date)}</span>
               </div>
 
@@ -370,11 +372,11 @@ function BookingsPage({ onStatusChange }) {
               </div>
               <div className="booking-detail-item">
                 <span className="booking-detail-label">Pickup Date</span>
-                <span className="booking-detail-value">{formatDate(selectedBooking.pickup_date)}</span>
+                <span className="booking-detail-value">{formatDate(selectedBooking.pickup_date)}{selectedBooking.pickup_time && ` at ${selectedBooking.pickup_time.slice(0, 5)}`}</span>
               </div>
               <div className="booking-detail-item">
                 <span className="booking-detail-label">Return Date</span>
-                <span className="booking-detail-value">{formatDate(selectedBooking.return_date)}</span>
+                <span className="booking-detail-value">{formatDate(selectedBooking.return_date)}{selectedBooking.return_time && ` at ${selectedBooking.return_time.slice(0, 5)}`}</span>
               </div>
               <div className="booking-detail-item">
                 <span className="booking-detail-label">Duration</span>
