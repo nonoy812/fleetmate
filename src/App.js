@@ -6,6 +6,7 @@ import VehicleDetail from './pages/Customer/VehicleDetail'
 import Dashboard from './pages/Admin/Dashboard'
 import Login from './pages/Admin/Login'
 import ProtectedRoute from './components/ProtectedRoute'
+import Footer from './components/Footer'
 import ChatWidget from './components/ChatWidget'
 import ScrollToTop from './components/ScrollToTop'
 
@@ -16,6 +17,7 @@ function CustomerLayout({ children }) {
     <>
       <Navbar />
       {children}
+      <Footer />
       <ChatWidget />
     </>
   )

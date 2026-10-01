@@ -18,8 +18,8 @@
 .filter-tabs {
   display: flex;
   gap: 6px;
-  background: #fff;
-  border: 1px solid #ece9e3;
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border);
   border-radius: 10px;
   padding: 4px;
   flex-wrap: wrap;
@@ -30,7 +30,7 @@
   border: none;
   border-radius: 7px;
   background: transparent;
-  color: #888;
+  color: var(--admin-text-muted);
   font-family: 'DM Sans', sans-serif;
   font-size: 13px;
   font-weight: 500;
@@ -39,15 +39,15 @@
 }
 
 .filter-tab.active { background: #111; color: #fff; }
-.filter-tab:hover:not(.active) { background: #f5f5f5; color: #333; }
+.filter-tab:hover:not(.active) { background: var(--admin-surface-2); color: var(--admin-text); }
 
 /* ── Search ── */
 .bookings-search-wrap {
   display: flex;
   align-items: center;
   gap: 10px;
-  background: #fff;
-  border: 1px solid #ece9e3;
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border);
   border-radius: 10px;
   padding: 10px 16px;
   min-width: 280px;
@@ -62,18 +62,18 @@
   background: transparent;
   font-family: 'DM Sans', sans-serif;
   font-size: 14px;
-  color: #111;
+  color: var(--admin-text);
   width: 100%;
 }
 
-.bookings-search::placeholder { color: #bbb; }
+.bookings-search::placeholder { color: var(--admin-text-muted); }
 
 /* ── Loading / Empty ── */
 .bookings-loading,
 .bookings-empty {
   text-align: center;
   padding: 60px;
-  color: #888;
+  color: var(--admin-text-muted);
   font-size: 14px;
   font-family: 'DM Sans', sans-serif;
   display: flex;
@@ -91,8 +91,8 @@
 
 /* ── Booking Strip ── */
 .booking-strip {
-  background: #fff;
-  border: 1px solid #ece9e3;
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border);
   border-radius: 12px;
   padding: 16px 20px;
   display: grid;
@@ -100,7 +100,7 @@
   align-items: center;
   gap: 20px;
   cursor: pointer;
-  border-left: 4px solid #ddd;
+  border-left: 4px solid var(--admin-border);
   transition: box-shadow 0.2s, transform 0.15s;
 }
 
@@ -113,7 +113,7 @@
 .booking-strip--approved { border-left-color: #059669; }
 .booking-strip--rejected { border-left-color: #ef4444; }
 .booking-strip--cancelled { border-left-color: #94a3b8; }
-.booking-strip--archived { opacity: 0.5; background: #f5f5f5; }
+.booking-strip--archived { opacity: 0.5; background: var(--admin-surface-2); }
 
 /* ── Strip Fields ── */
 .booking-strip-vehicle-wrap {
@@ -126,7 +126,7 @@
   font-family: 'Playfair Display', serif;
   font-size: 16px;
   font-weight: 700;
-  color: #111;
+  color: var(--admin-text);
 }
 
 .driver-indicator {
@@ -154,17 +154,17 @@
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: #aaa;
+  color: var(--admin-text-muted);
 }
 
 .booking-strip-value {
   font-size: 14px;
   font-weight: 500;
-  color: #111;
+  color: var(--admin-text);
 }
 
-.booking-strip-dates { font-size: 13px; font-weight: 600; color: #111; }
-.booking-strip-sub { font-size: 12px; color: #888; }
+.booking-strip-dates { font-size: 13px; font-weight: 600; color: var(--admin-text); }
+.booking-strip-sub { font-size: 12px; color: var(--admin-text-muted); }
 
 .booking-strip-right {
   display: flex;
@@ -174,7 +174,7 @@
 }
 
 .booking-strip-price { font-size: 17px; font-weight: 700; color: #059669; }
-.booking-strip-date { font-size: 11px; color: #bbb; white-space: nowrap; }
+.booking-strip-date { font-size: 11px; color: var(--admin-text-muted); white-space: nowrap; }
 
 /* ── Status Badge ── */
 .status-badge {
@@ -211,7 +211,7 @@
 
 /* ── Booking Detail Modal ── */
 .booking-detail-modal {
-  background: #fff;
+  background: var(--admin-surface);
   border-radius: 20px;
   padding: 32px;
   width: 100%;
@@ -234,12 +234,12 @@
   font-family: 'Playfair Display', serif;
   font-size: 22px;
   font-weight: 800;
-  color: #111;
+  color: var(--admin-text);
   margin: 0 0 4px;
   letter-spacing: -0.5px;
 }
 
-.booking-detail-created { font-size: 12px; color: #aaa; margin: 0; }
+.booking-detail-created { font-size: 12px; color: var(--admin-text-muted); margin: 0; }
 
 .booking-detail-header-right {
   display: flex;
@@ -250,8 +250,8 @@
 
 .detail-close-btn {
   background: transparent;
-  border: 1px solid #ece9e3;
-  color: #888;
+  border: 1px solid var(--admin-border);
+  color: var(--admin-text-muted);
   border-radius: 8px;
   width: 32px;
   height: 32px;
@@ -326,7 +326,7 @@
   gap: 16px;
   margin-bottom: 24px;
   padding: 20px;
-  background: #f8f7f4;
+  background: var(--admin-bg);
   border-radius: 12px;
 }
 
@@ -338,10 +338,10 @@
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: #aaa;
+  color: var(--admin-text-muted);
 }
 
-.booking-detail-value { font-size: 14px; color: #333; font-weight: 400; }
+.booking-detail-value { font-size: 14px; color: var(--admin-text); font-weight: 400; }
 .booking-detail-price { font-size: 18px; font-weight: 700; color: #059669; }
 
 .booking-detail-phone {
@@ -360,7 +360,7 @@
 /* ── Calendar in Modal ── */
 .booking-detail-calendar {
   margin-bottom: 24px;
-  border: 1px solid #ece9e3;
+  border: 1px solid var(--admin-border);
   border-radius: 12px;
   padding: 20px;
 }
@@ -370,7 +370,7 @@
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: #aaa;
+  color: var(--admin-text-muted);
   margin: 0 0 16px;
 }
 
@@ -449,15 +449,15 @@
 /* ── Confirm Dialog ── */
 .confirm-dialog-modal {
   width: 100%;
-  background: #f8f7f4;
-  border: 1px solid #ece9e3;
+  background: var(--admin-bg);
+  border: 1px solid var(--admin-border);
   border-radius: 12px;
   padding: 16px;
 }
 
 .confirm-dialog-text {
   font-size: 14px;
-  color: #555;
+  color: var(--admin-text-soft);
   margin: 0 0 14px;
   line-height: 1.5;
 }
@@ -498,8 +498,8 @@
 
 .confirm-no {
   background: transparent;
-  color: #888;
-  border: 1px solid #ddd;
+  color: var(--admin-text-muted);
+  border: 1px solid var(--admin-border);
   border-radius: 8px;
   padding: 10px 16px;
   font-family: 'DM Sans', sans-serif;
@@ -508,7 +508,7 @@
   transition: all 0.2s;
 }
 
-.confirm-no:hover { border-color: #bbb; color: #333; }
+.confirm-no:hover { border-color: var(--admin-text-muted); color: var(--admin-text); }
 
 /* ── Cancel Flow ── */
 .cancel-flow {
@@ -535,7 +535,7 @@
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: #888;
+  color: var(--admin-text-muted);
   margin: 0;
 }
 
@@ -548,13 +548,13 @@
 .cancel-by-btn {
   flex: 1;
   padding: 10px 14px;
-  border: 1px solid #ece9e3;
+  border: 1px solid var(--admin-border);
   border-radius: 8px;
-  background: #fff;
+  background: var(--admin-surface);
   font-family: 'DM Sans', sans-serif;
   font-size: 13px;
   font-weight: 500;
-  color: #555;
+  color: var(--admin-text-soft);
   cursor: pointer;
   transition: all 0.2s;
   text-align: center;
@@ -570,16 +570,16 @@
 .cancel-reason-input {
   width: 100%;
   padding: 12px 14px;
-  border: 1px solid #ece9e3;
+  border: 1px solid var(--admin-border);
   border-radius: 8px;
   font-family: 'DM Sans', sans-serif;
   font-size: 14px;
-  color: #111;
+  color: var(--admin-text);
   resize: vertical;
   outline: none;
   transition: border-color 0.2s;
   box-sizing: border-box;
-  background: #fff;
+  background: var(--admin-surface);
 }
 
 .cancel-reason-input:focus { border-color: #ef4444; }

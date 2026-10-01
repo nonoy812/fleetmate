@@ -446,7 +446,7 @@ function Overview({ onNavigate }) {
           <p className="chart-sub">By number of approved bookings</p>
           <ResponsiveContainer width="100%" height={topVehicles.length * 44 + 20}>
             <BarChart data={topVehicles} layout="vertical" margin={{ top: 0, right: 16, left: 8, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f0ede8" horizontal={false} />
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--admin-border)" horizontal={false} />
               <XAxis type="number" tick={{ fontSize: 11, fill: '#888' }} axisLine={false} tickLine={false} />
               <YAxis type="category" dataKey="name" tick={{ fontSize: 11, fill: '#555' }} axisLine={false} tickLine={false} width={110} />
               <Tooltip content={<VehicleTooltip />} />
@@ -462,7 +462,7 @@ function Overview({ onNavigate }) {
           <p className="chart-sub">Last 6 months — completed bookings only</p>
           <ResponsiveContainer width="100%" height={220}>
             <BarChart data={monthlyRevenue} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f0ede8" />
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--admin-border)" />
               <XAxis dataKey="month" tick={{ fontSize: 12, fill: '#888' }} axisLine={false} tickLine={false} />
               <YAxis tick={{ fontSize: 11, fill: '#888' }} axisLine={false} tickLine={false} tickFormatter={v => `₱${(v/1000).toFixed(0)}k`} />
               <Tooltip content={<CustomTooltip />} />
@@ -484,7 +484,7 @@ function Overview({ onNavigate }) {
                     <Cell key={index} fill={entry.color} />
                   ))}
                 </Pie>
-                <Legend iconType="circle" iconSize={8} formatter={(value) => <span style={{ fontSize: 12, color: '#555' }}>{value}</span>} />
+                <Legend iconType="circle" iconSize={8} formatter={(value) => <span style={{ fontSize: 12, color: 'var(--admin-text-soft)' }}>{value}</span>} />
                 <Tooltip formatter={(value) => [value, 'bookings']} />
               </PieChart>
             </ResponsiveContainer>

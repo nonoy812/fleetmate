@@ -5,6 +5,8 @@
   --admin-bg: #f8f7f4;
   --admin-surface: #ffffff;
   --admin-border: #ece9e3;
+  --admin-surface-2: #f5f5f3;
+  --admin-text-soft: #555;
   --admin-sidebar-bg: #0a0a0a;
   --admin-sidebar-text: #888;
   --admin-sidebar-active: #ffffff;
@@ -16,6 +18,18 @@
   --admin-warning: #f59e0b;
   --admin-success: #059669;
   --admin-sidebar-width: 240px;
+}
+
+html.admin-dark {
+  --admin-bg: #0f1115;
+  --admin-surface: #181b21;
+  --admin-surface-2: #20242c;
+  --admin-border: #2a2f39;
+  --admin-sidebar-bg: #07080a;
+  --admin-text: #e8eaed;
+  --admin-text-soft: #b4bac4;
+  --admin-text-muted: #8b93a0;
+  color-scheme: dark;
 }
 
 * { box-sizing: border-box; }
@@ -146,7 +160,7 @@
   border-radius: 10px;
   border: 1px solid #1e1e1e;
   background: transparent;
-  color: #555;
+  color: var(--admin-text-soft);
   font-family: 'DM Sans', sans-serif;
   font-size: 14px;
   font-weight: 500;
@@ -198,6 +212,25 @@
   display: flex;
   align-items: center;
   gap: 16px;
+}
+
+.theme-toggle {
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--admin-surface);
+  color: var(--admin-text);
+  border: 1px solid var(--admin-border);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.theme-toggle:hover {
+  border-color: var(--admin-primary);
+  color: var(--admin-primary);
 }
 
 .admin-avatar {
@@ -284,7 +317,7 @@
 }
 
 .btn-ghost:hover {
-  border-color: #bbb;
+  border-color: var(--admin-text-muted);
   color: var(--admin-text);
 }
 
@@ -359,7 +392,7 @@
     padding: 10px 0;
     background: transparent;
     border: none;
-    color: #555;
+    color: var(--admin-text-soft);
     font-family: 'DM Sans', sans-serif;
     font-size: 10px;
     font-weight: 500;

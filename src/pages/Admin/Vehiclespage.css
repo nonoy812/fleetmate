@@ -10,7 +10,7 @@
 .vehicles-empty {
   text-align: center;
   padding: 60px;
-  color: #888;
+  color: var(--admin-text-muted);
   font-size: 14px;
   font-family: 'DM Sans', sans-serif;
 }
@@ -25,7 +25,7 @@
 
 .vehicles-count {
   font-size: 14px;
-  color: #888;
+  color: var(--admin-text-muted);
   margin: 0;
 }
 
@@ -40,8 +40,8 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  background: #fff;
-  border: 1px solid #ece9e3;
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border);
   border-radius: 10px;
   padding: 10px 16px;
   flex: 1;
@@ -56,11 +56,11 @@
   background: transparent;
   font-family: 'DM Sans', sans-serif;
   font-size: 14px;
-  color: #111;
+  color: var(--admin-text);
   width: 100%;
 }
 
-.vehicles-search::placeholder { color: #bbb; }
+.vehicles-search::placeholder { color: var(--admin-text-muted); }
 
 /* ── Filter Dropdown ── */
 .filter-dropdown-wrap {
@@ -73,13 +73,13 @@
   align-items: center;
   gap: 8px;
   padding: 10px 16px;
-  background: #fff;
-  border: 1px solid #ece9e3;
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border);
   border-radius: 10px;
   font-family: 'DM Sans', sans-serif;
   font-size: 14px;
   font-weight: 500;
-  color: #555;
+  color: var(--admin-text-soft);
   cursor: pointer;
   transition: all 0.2s;
   white-space: nowrap;
@@ -101,8 +101,8 @@
   position: absolute;
   top: calc(100% + 8px);
   right: 0;
-  background: #fff;
-  border: 1px solid #ece9e3;
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border);
   border-radius: 12px;
   padding: 16px;
   min-width: 220px;
@@ -118,7 +118,7 @@
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: #aaa;
+  color: var(--admin-text-muted);
   margin: 0 0 8px;
 }
 
@@ -130,12 +130,12 @@
 
 .filter-option {
   padding: 6px 12px;
-  border: 1px solid #ece9e3;
+  border: 1px solid var(--admin-border);
   border-radius: 8px;
   background: transparent;
   font-family: 'DM Sans', sans-serif;
   font-size: 13px;
-  color: #555;
+  color: var(--admin-text-soft);
   cursor: pointer;
   transition: all 0.2s;
 }
@@ -195,8 +195,8 @@
 
 /* ── Vehicle Card ── */
 .vehicle-admin-card {
-  background: #fff;
-  border: 1px solid #ece9e3;
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border);
   border-radius: 16px;
   overflow: hidden;
   cursor: pointer;
@@ -220,7 +220,7 @@
   position: relative;
   height: 160px;
   overflow: hidden;
-  background: #f5f5f3;
+  background: var(--admin-surface-2);
 }
 
 .vehicle-admin-img-wrap img {
@@ -255,11 +255,11 @@
   font-family: 'Playfair Display', serif;
   font-size: 16px;
   font-weight: 700;
-  color: #111;
+  color: var(--admin-text);
   margin: 0 0 4px;
 }
 
-.vehicle-admin-meta { font-size: 12px; color: #888; margin: 0 0 4px; }
+.vehicle-admin-meta { font-size: 12px; color: var(--admin-text-muted); margin: 0 0 4px; }
 
 .vehicle-admin-price {
   font-size: 14px;
@@ -273,15 +273,15 @@
   padding: 10px 16px 14px;
   display: flex;
   gap: 8px;
-  border-top: 1px solid #f0ede8;
+  border-top: 1px solid var(--admin-border);
 }
 
 .edit-btn {
   width: 100%;
   padding: 8px 16px;
-  background: #f5f5f3;
-  color: #333;
-  border: 1px solid #ece9e3;
+  background: var(--admin-surface-2);
+  color: var(--admin-text);
+  border: 1px solid var(--admin-border);
   border-radius: 8px;
   font-family: 'DM Sans', sans-serif;
   font-size: 12px;
@@ -294,8 +294,8 @@
 
 /* Calendar panel — PC only */
 .calendar-side-panel {
-  background: #fff;
-  border: 1px solid #ece9e3;
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border);
   border-radius: 16px;
   padding: 24px;
   position: sticky;
@@ -307,8 +307,8 @@
 
 /* ── Inline Calendar ── */
 .inline-calendar {
-  background: #fff;
-  border: 1px solid #ece9e3;
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border);
   border-radius: 16px;
   padding: 24px;
   margin-bottom: 16px;
@@ -326,20 +326,20 @@
   font-family: 'Playfair Display', serif;
   font-size: 18px;
   font-weight: 700;
-  color: #111;
+  color: var(--admin-text);
   margin: 0 0 4px;
 }
 
 .inline-calendar-sub {
   font-size: 12px;
-  color: #aaa;
+  color: var(--admin-text-muted);
   margin: 0;
 }
 
 .inline-calendar-close {
   background: transparent;
-  border: 1px solid #ece9e3;
-  color: #888;
+  border: 1px solid var(--admin-border);
+  color: var(--admin-text-muted);
   border-radius: 8px;
   width: 32px;
   height: 32px;
@@ -393,7 +393,7 @@
 }
 
 .vehicle-form-modal {
-  background: #fff;
+  background: var(--admin-surface);
   border-radius: 20px;
   padding: 32px;
   width: 100%;
@@ -415,14 +415,14 @@
   font-family: 'Playfair Display', serif;
   font-size: 22px;
   font-weight: 700;
-  color: #111;
+  color: var(--admin-text);
   margin: 0;
 }
 
 .form-close-btn {
   background: transparent;
-  border: 1px solid #ece9e3;
-  color: #888;
+  border: 1px solid var(--admin-border);
+  color: var(--admin-text-muted);
   border-radius: 8px;
   width: 32px;
   height: 32px;
@@ -447,7 +447,7 @@
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: #888;
+  color: var(--admin-text-muted);
   margin-bottom: 6px;
 }
 
@@ -456,20 +456,20 @@
 .form-group textarea {
   width: 100%;
   padding: 11px 14px;
-  border: 1px solid #ece9e3;
+  border: 1px solid var(--admin-border);
   border-radius: 8px;
   font-family: 'DM Sans', sans-serif;
   font-size: 14px;
-  color: #111;
+  color: var(--admin-text);
   box-sizing: border-box;
   outline: none;
   transition: border-color 0.2s;
-  background: #fafaf8;
+  background: var(--admin-surface-2);
 }
 
 .form-group input:focus,
 .form-group select:focus,
-.form-group textarea:focus { border-color: #059669; background: #fff; }
+.form-group textarea:focus { border-color: #059669; background: var(--admin-surface); }
 
 .form-group textarea { resize: vertical; }
 
@@ -482,7 +482,7 @@
   font-size: 14px;
   text-transform: none;
   letter-spacing: 0;
-  color: #333;
+  color: var(--admin-text);
   font-weight: 500;
 }
 
@@ -550,12 +550,12 @@
   display: flex;
   gap: 10px;
   padding-top: 20px;
-  border-top: 1px solid #f0ede8;
+  border-top: 1px solid var(--admin-border);
 }
 
 /* ── Confirm Modal ── */
 .confirm-modal {
-  background: #fff;
+  background: var(--admin-surface);
   border-radius: 16px;
   padding: 28px;
   width: 100%;
@@ -568,13 +568,13 @@
   font-family: 'Playfair Display', serif;
   font-size: 20px;
   font-weight: 700;
-  color: #111;
+  color: var(--admin-text);
   margin: 0 0 10px;
 }
 
 .confirm-modal p {
   font-size: 14px;
-  color: #555;
+  color: var(--admin-text-soft);
   line-height: 1.6;
   margin: 0 0 24px;
 }
@@ -605,10 +605,10 @@
   align-items: center;
   gap: 10px;
   padding: 12px 16px;
-  background: #fafaf8;
-  border: 1px dashed #ece9e3;
+  background: var(--admin-surface-2);
+  border: 1px dashed var(--admin-border);
   border-radius: 8px;
-  color: #555;
+  color: var(--admin-text-soft);
   font-family: 'DM Sans', sans-serif;
   font-size: 14px;
   font-weight: 500;
@@ -634,7 +634,7 @@
   height: 160px;
   object-fit: cover;
   border-radius: 8px;
-  border: 1px solid #ece9e3;
+  border: 1px solid var(--admin-border);
   display: block;
 }
 

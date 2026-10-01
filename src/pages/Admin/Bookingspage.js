@@ -460,7 +460,7 @@ function BookingsPage({ onStatusChange }) {
                   <p className="cancel-flow-title" style={{ color: '#059669' }}>Switch Vehicle</p>
                   <p className="cancel-flow-label">Select replacement vehicle</p>
                   {switchLoading ? (
-                    <p style={{ color: '#888', fontSize: '13px' }}>Checking availability...</p>
+                    <p style={{ color: 'var(--admin-text-muted)', fontSize: '13px' }}>Checking availability...</p>
                   ) : availableVehicles.length === 0 ? (
                     <p style={{ color: '#ef4444', fontSize: '13px' }}>No available vehicles for these dates.</p>
                   ) : (

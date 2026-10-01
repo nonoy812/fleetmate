@@ -9,7 +9,7 @@
 .overview-loading {
   text-align: center;
   padding: 60px;
-  color: #888;
+  color: var(--admin-text-muted);
   font-family: 'DM Sans', sans-serif;
 }
 
@@ -21,8 +21,8 @@
 }
 
 .stat-card {
-  background: #fff;
-  border: 1px solid #ece9e3;
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border);
   border-radius: 16px;
   padding: 24px;
   display: flex;
@@ -71,13 +71,13 @@
   font-family: 'Playfair Display', serif;
   font-size: 32px;
   font-weight: 800;
-  color: #111;
+  color: var(--admin-text);
   line-height: 1;
 }
 
 .stat-label {
   font-size: 13px;
-  color: #888;
+  color: var(--admin-text-muted);
   font-weight: 400;
 }
 
@@ -90,8 +90,8 @@
 
 /* ── Chart Card ── */
 .chart-card {
-  background: #fff;
-  border: 1px solid #ece9e3;
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border);
   border-radius: 16px;
   padding: 24px;
 }
@@ -100,13 +100,13 @@
   font-family: 'Playfair Display', serif;
   font-size: 17px;
   font-weight: 700;
-  color: #111;
+  color: var(--admin-text);
   margin: 0 0 4px;
 }
 
 .chart-sub {
   font-size: 12px;
-  color: #aaa;
+  color: var(--admin-text-muted);
   margin: 0 0 20px;
 }
 
@@ -124,7 +124,7 @@
   padding: 10px 14px;
 }
 
-.chart-tooltip-label { font-size: 12px; color: #888; margin: 0 0 4px; }
+.chart-tooltip-label { font-size: 12px; color: var(--admin-text-muted); margin: 0 0 4px; }
 .chart-tooltip-value { font-size: 15px; font-weight: 700; color: #fff; margin: 0; }
 .chart-tooltip-sub { font-size: 12px; color: #059669; margin: 2px 0 0; }
 
@@ -137,8 +137,8 @@
 
 /* ── Overview Section ── */
 .overview-section {
-  background: #fff;
-  border: 1px solid #ece9e3;
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border);
   border-radius: 16px;
   padding: 24px;
 }
@@ -156,7 +156,7 @@
   align-items: center;
   gap: 12px;
   padding: 32px 20px;
-  color: #aaa;
+  color: var(--admin-text-muted);
   font-size: 14px;
 }
 
@@ -171,7 +171,7 @@
   align-items: center;
   gap: 16px;
   padding: 12px 0;
-  border-bottom: 1px solid #f0ede8;
+  border-bottom: 1px solid var(--admin-border);
 }
 
 .upcoming-item:last-of-type { border-bottom: none; padding-bottom: 0; }
@@ -215,7 +215,7 @@
   font-family: 'Playfair Display', serif;
   font-size: 14px;
   font-weight: 700;
-  color: #111;
+  color: var(--admin-text);
   margin: 0 0 2px;
   white-space: nowrap;
   overflow: hidden;
@@ -224,7 +224,7 @@
 
 .upcoming-customer {
   font-size: 12px;
-  color: #888;
+  color: var(--admin-text-muted);
   margin: 0;
 }
 
@@ -240,12 +240,12 @@
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: #aaa;
+  color: var(--admin-text-muted);
 }
 
 .upcoming-return-date {
   font-size: 12px;
-  color: #555;
+  color: var(--admin-text-soft);
   font-weight: 500;
 }
 
@@ -274,7 +274,7 @@
   width: 100%;
   padding: 10px;
   background: transparent;
-  border: 1px dashed #ece9e3;
+  border: 1px dashed var(--admin-border);
   border-radius: 8px;
   color: #059669;
   font-family: 'DM Sans', sans-serif;
@@ -305,8 +305,8 @@
   gap: 4px;
   padding: 8px 4px;
   border-radius: 10px;
-  background: #f8f7f4;
-  border: 1px solid #ece9e3;
+  background: var(--admin-bg);
+  border: 1px solid var(--admin-border);
 }
 
 .week-day--today {
@@ -324,7 +324,7 @@
   font-weight: 600;
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  color: #aaa;
+  color: var(--admin-text-muted);
 }
 
 .week-day--has-pickup .week-day-name { color: rgba(255,255,255,0.7); }
@@ -334,7 +334,7 @@
   font-family: 'Playfair Display', serif;
   font-size: 15px;
   font-weight: 800;
-  color: #111;
+  color: var(--admin-text);
   line-height: 1;
 }
 
@@ -352,7 +352,7 @@
 
 .week-empty {
   text-align: center;
-  color: #aaa;
+  color: var(--admin-text-muted);
   font-size: 13px;
   padding: 12px 0;
   margin: 0;
@@ -362,7 +362,7 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  border-top: 1px solid #f0ede8;
+  border-top: 1px solid var(--admin-border);
   padding-top: 12px;
 }
 
@@ -374,12 +374,12 @@
 }
 
 .week-pickup-date {
-  color: #888;
+  color: var(--admin-text-muted);
   font-weight: 500;
 }
 
 .week-pickup-vehicle {
-  color: #111;
+  color: var(--admin-text);
   font-weight: 600;
   font-family: 'Playfair Display', serif;
   font-size: 13px;
@@ -409,7 +409,7 @@
 
 /* ── Pickups Modal ── */
 .pickups-modal {
-  background: #fff;
+  background: var(--admin-surface);
   border-radius: 20px;
   padding: 32px;
   width: 100%;
@@ -432,14 +432,14 @@
   font-family: 'Playfair Display', serif;
   font-size: 22px;
   font-weight: 800;
-  color: #111;
+  color: var(--admin-text);
   margin: 0 0 4px;
   letter-spacing: -0.5px;
 }
 
 .pickups-modal-sub {
   font-size: 13px;
-  color: #888;
+  color: var(--admin-text-muted);
   margin: 0;
 }
 
@@ -450,8 +450,8 @@
 
 .detail-close-btn {
   background: transparent;
-  border: 1px solid #ece9e3;
-  color: #888;
+  border: 1px solid var(--admin-border);
+  color: var(--admin-text-muted);
   border-radius: 8px;
   width: 32px;
   height: 32px;
@@ -469,8 +469,8 @@
 /* ── Shared Buttons ── */
 .btn-ghost {
   background: transparent;
-  color: #888;
-  border: 1px solid #ece9e3;
+  color: var(--admin-text-muted);
+  border: 1px solid var(--admin-border);
   border-radius: 8px;
   padding: 8px 14px;
   font-family: 'DM Sans', sans-serif;
@@ -491,7 +491,7 @@
   grid-template-columns: 1fr 1fr;
   gap: 16px;
   padding: 20px;
-  background: #f8f7f4;
+  background: var(--admin-bg);
   border-radius: 12px;
 }
 
@@ -506,12 +506,12 @@
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: #aaa;
+  color: var(--admin-text-muted);
 }
 
 .booking-detail-value-o {
   font-size: 14px;
-  color: #333;
+  color: var(--admin-text);
 }
 
 .booking-detail-phone-o {
